@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolutionary War Study Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .nav-btn.success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .flashcard {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin: 20px 0;
+        }
+
+        .flashcard:hover {
+            transform: scale(1.02);
+        }
+
+        .flashcard h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .flashcard .definition {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+
+        .flashcard .example {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            font-style: italic;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .question-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .option {
+            padding: 15px 20px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1em;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #e0e7ff;
+        }
+
+        .option.correct {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .option.incorrect {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #d1fae5;
+            border-left: 5px solid #10b981;
+        }
+
+        .feedback.incorrect {
+            background: #fee2e2;
+            border-left: 5px solid #ef4444;
+        }
+
+        .feedback h4 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            opacity: 0.9;
+        }
+
+        .weakness-list {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .weakness-list h3 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .weakness-item {
+            padding: 10px;
+            background: white;
+            margin: 10px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .strength-list {
+            background: #d1fae5;
+            border-left: 5px solid #10b981;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .strength-list h3 {
+            color: #065f46;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .card-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .flip-indicator {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .mastery-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .mastery-badge.high {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .mastery-badge.medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .mastery-badge.low {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 600px) {
+            .content {
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 1.5em;
+            }
+
+            .nav-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .flashcard {
+                padding: 30px 20px;
+                min-height: 250px;
+            }
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .alert.info {
+            background: #dbeafe;
+            border-left: 5px solid #3b82f6;
+            color: #1e40af;
+        }
+
+        .alert.success {
+            background: #d1fae5;
+            border-left: 5px solid #10b981;
+            color: #065f46;
+        }
+
+        .reset-btn {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+
+        .reset-btn:hover {
+            background: #fecaca;
+        }
+
+        .language-selector {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .language-selector select {
+            background: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .vocab-term {
+            color: #667eea;
+            font-weight: 600;
+            cursor: help;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+        }
+
+        .vocab-term:hover {
+            color: #764ba2;
+        }
+
+        .tooltip {
+            position: fixed;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 15px;
+            max-width: 300px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+
+        .tooltip h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .tooltip p {
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+
+        .close-tooltip {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .nav-btn i {
+            font-size: 1.5em;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .alert i {
+            font-size: 1.5em;
+        }
+
+        @media (max-width: 600px) {
+            .language-selector {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: 15px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="language-selector">
+                <i class="fas fa-globe"></i>
+                <select id="languageSelect" onchange="translatePage(this.value)">
+                    <option value="">English</option>
+                    <option value="pt">Portuguese (Português)</option>
+                    <option value="uk">Ukrainian (Українська)</option>
+                    <option value="es">Spanish (Español)</option>
+                    <option value="zh-CN">Chinese (中文)</option>
+                    <option value="vi">Vietnamese (Tiếng Việt)</option>
+                    <option value="ko">Korean (한국어)</option>
+                    <option value="ar">Arabic (العربية)</option>
+                    <option value="ru">Russian (Русский)</option>
+                    <option value="fr">French (Français)</option>
+                </select>
+            </div>
+            <h1><i class="fas fa-flag-usa"></i> Revolutionary War Study Tool</h1>
+            <p>Get ready to ace your test! Learn vocabulary, practice questions, and track your progress.</p>
+        </header>
+
+        <div class="content">
+            <!-- Tooltip for definitions -->
+            <div id="definitionTooltip" class="tooltip">
+                <span class="close-tooltip" onclick="closeTooltip()">✕</span>
+                <div id="tooltipContent"></div>
+            </div>
+
+            <!-- HOME SECTION -->
+            <div id="home" class="section active">
+                <h2 style="margin-bottom: 20px;">Pick How You Want to Study</h2>
+                
+                <div id="overallProgress"></div>
+
+                <div class="nav-buttons">
+                    <button class="nav-btn" onclick="showSection('vocab')">
+                        <i class="fas fa-book"></i> Learn Vocabulary<br>
+                        <small>Flip through flashcards (22 terms)</small>
+                    </button>
+                    <button class="nav-btn secondary" onclick="showSection('practice')">
+                        <i class="fas fa-dumbbell"></i> Practice Mode<br>
+                        <small>Get hints when you're wrong!</small>
+                    </button>
+                    <button class="nav-btn success" onclick="showSection('shortanswer')">
+                        <i class="fas fa-pencil-alt"></i> Short Answer Practice<br>
+                        <small>Practice writing responses</small>
+                    </button>
+                    <button class="nav-btn success" onclick="showSection('test')">
+                        <i class="fas fa-check-circle"></i> Take a Practice Test<br>
+                        <small>See if you're ready (30 questions)</small>
+                    </button>
+                    <button class="nav-btn" onclick="showSection('progress')">
+                        <i class="fas fa-chart-line"></i> Check My Progress<br>
+                        <small>What do I know? What do I need to work on?</small>
+                    </button>
+                </div>
+
+                <div class="alert info">
+                    <i class="fas fa-lightbulb"></i>
+                    <div>
+                        <strong>How to Study:</strong> Start with vocabulary flashcards to learn the words. Then do practice questions to test yourself. When you feel confident, take the full practice test!
+                    </div>
+                </div>
+            </div>
+
+            <!-- VOCABULARY SECTION -->
+            <div id="vocab" class="section">
+                <button class="btn btn-secondary" onclick="showSection('home')">← Back to Home</button>
+                
+                <h2 style="margin: 20px 0;">Vocabulary Flashcards</h2>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="vocabProgress">0%</div>
+                </div>
+
+                <div id="flashcardContainer"></div>
+
+                <div class="card-controls">
+                    <button class="btn btn-secondary" onclick="prevCard()"><i class="fas fa-arrow-left"></i> Previous</button>
+                    <button class="btn btn-primary" onclick="markKnown()"><i class="fas fa-check"></i> I Know This</button>
+                    <button class="btn btn-secondary" onclick="nextCard()">Next <i class="fas fa-arrow-right"></i></button>
+                </div>
+
+                <p class="flip-indicator">Click the card to flip between term and definition</p>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-secondary" onclick="shuffleCards()"><i class="fas fa-random"></i> Shuffle Cards</button>
+                    <button class="reset-btn" onclick="resetVocabProgress()">Reset Vocabulary Progress</button>
+                </div>
+            </div>
+
+            <!-- PRACTICE SECTION -->
+            <div id="practice" class="section">
+                <button class="btn btn-secondary" onclick="showSection('home')">← Back to Home</button>
+                
+                <h2 style="margin: 20px 0;">Practice Questions</h2>
+
+                <div class="alert info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Practice Mode:</strong> Answer each question, then click "Check Answer" to see if you're right. If you get it wrong, you'll see an explanation to help you learn! <em>Click on any <span class="vocab-term">highlighted words</span> to see their definition.</em>
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="practiceProgress">Question 0 of 0</div>
+                </div>
+
+                <div id="practiceContainer"></div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-secondary" onclick="loadNewPracticeSet()"><i class="fas fa-sync-alt"></i> New Practice Set</button>
+                </div>
+            </div>
+
+            <!-- SHORT ANSWER SECTION -->
+            <div id="shortanswer" class="section">
+                <button class="btn btn-secondary" onclick="showSection('home')"><i class="fas fa-arrow-left"></i> Back to Home</button>
+                
+                <h2 style="margin: 20px 0;">Short Answer Practice</h2>
+
+                <div class="alert info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Practice Mode:</strong> Write your answer in the box, then reveal an example answer and self-assessment checklist. Compare your answer to see how you did!
+                    </div>
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress-fill" id="shortAnswerProgress">Question 0 of 5</div>
+                </div>
+
+                <div id="shortAnswerContainer"></div>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="btn btn-secondary" onclick="loadShortAnswers()"><i class="fas fa-sync-alt"></i> Start Over</button>
+                </div>
+            </div>
+
+            <!-- TEST SECTION -->
+            <div id="test" class="section">
+                <button class="btn btn-secondary" onclick="showSection('home')">← Back to Home</button>
+                
+                <h2 style="margin: 20px 0;">Practice Test</h2>
+
+                <div class="alert info">
+                    <i class="fas fa-bolt"></i>
+                    <div>
+                        <strong>Test Mode:</strong> Answer all 30 questions, then see your results. No peeking at answers until the end!
+                    </div>
+                </div>
+
+                <div id="testContainer"></div>
+            </div>
+
+            <!-- PROGRESS SECTION -->
+            <div id="progress" class="section">
+                <button class="btn btn-secondary" onclick="showSection('home')">← Back to Home</button>
+                
+                <h2 style="margin: 20px 0;">Your Progress</h2>
+
+                <div class="stats-grid" id="statsContainer"></div>
+
+                <div id="weaknessContainer"></div>
+                <div id="strengthContainer"></div>
+
+                <button class="reset-btn" onclick="resetAllProgress()">Reset All Progress</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA ====================
+        
+        const vocabulary = [
+            {
+                term: "Proclamation",
+                definition: "An official announcement or order made by a government or ruler",
+                example: "The Proclamation of 1763 banned colonists from settling west of the Appalachian Mountains",
+                category: "Causes of Unrest"
+            },
+            {
+                term: "Quarter/Quartering",
+                definition: "To provide housing, food, and supplies to soldiers",
+                example: "The Quartering Act forced colonists to house British soldiers in their homes",
+                category: "Causes of Unrest"
+            },
+            {
+                term: "Tax",
+                definition: "Money that people are required to pay to the government",
+                example: "The Stamp Act taxed printed materials like newspapers and legal documents",
+                category: "Causes of Unrest"
+            },
+            {
+                term: "Representation",
+                definition: "Having someone speak and vote for you in government",
+                example: "Colonists argued 'no taxation without representation' - they wanted a voice in Parliament",
+                category: "Causes of Unrest"
+            },
+            {
+                term: "Boycott",
+                definition: "Refusing to buy or use certain goods as a form of protest",
+                example: "Colonists boycotted British goods after the Stamp Act to pressure Britain economically",
+                category: "Causes of Unrest"
+            },
+            {
+                term: "Repeal",
+                definition: "To officially cancel or revoke a law",
+                example: "Britain repealed the Stamp Act in 1766 after massive colonial protests",
+                category: "Causes of Unrest"
+            },
+            {
+                term: "Intolerable (Coercive)",
+                definition: "Too extreme or severe to be endured; unbearable",
+                example: "The Intolerable Acts punished all of Massachusetts by closing Boston Harbor",
+                category: "Causes of Unrest"
+            },
+            {
+                term: "Minutemen",
+                definition: "Colonial militia members ready to fight at a minute's notice",
+                example: "Minutemen fought British troops at Lexington and Concord in April 1775",
+                category: "Causes of Unrest"
+            },
+            {
+                term: "Casualties",
+                definition: "People killed or injured in a battle or conflict",
+                example: "The Boston Massacre resulted in 5 casualties, including Crispus Attucks",
+                category: "Causes of Unrest"
+            },
+            {
+                term: "Escalation",
+                definition: "When a conflict grows more intense or serious over time",
+                example: "From 1763-1775, conflicts escalated from protests to armed rebellion",
+                category: "Causes of Unrest"
+            },
+            {
+                term: "Patriot",
+                definition: "A colonist who supported independence from Britain",
+                example: "Samuel Adams was a Patriot who organized protests against British policies",
+                category: "Uncovering Loyalties"
+            },
+            {
+                term: "Loyalist (Tory)",
+                definition: "A colonist who remained loyal to King George III and Britain",
+                example: "Many wealthy merchants were Loyalists because their business depended on British trade",
+                category: "Uncovering Loyalties"
+            },
+            {
+                term: "Neutral",
+                definition: "Refusing to take sides in a conflict",
+                example: "Some colonists stayed neutral to protect their families from retaliation",
+                category: "Uncovering Loyalties"
+            },
+            {
+                term: "Perspective",
+                definition: "A person's point of view shaped by their experiences and identity",
+                example: "Enslaved people had a different perspective on 'liberty' than wealthy colonists",
+                category: "Uncovering Loyalties"
+            },
+            {
+                term: "Rebellion",
+                definition: "Armed resistance against a government or ruler",
+                example: "British saw colonial resistance as illegal rebellion; colonists saw it as justified",
+                category: "Uncovering Loyalties"
+            },
+            {
+                term: "Independence",
+                definition: "Freedom from being controlled by another country; self-governance",
+                example: "The Declaration of Independence announced America's freedom from Britain",
+                category: "Declaration"
+            },
+            {
+                term: "Unalienable Rights",
+                definition: "Rights that cannot be taken away - they belong to all people",
+                example: "Jefferson listed life, liberty, and the pursuit of happiness as unalienable rights",
+                category: "Declaration"
+            },
+            {
+                term: "Consent of the Governed",
+                definition: "Government power comes from the permission of the people it rules",
+                example: "The Declaration says government needs consent of the governed to be legitimate",
+                category: "Declaration"
+            },
+            {
+                term: "Tyranny",
+                definition: "Cruel, oppressive, and unjust use of power",
+                example: "Jefferson accused King George of tyranny for taxing colonists without their consent",
+                category: "Declaration"
+            },
+            {
+                term: "Treason",
+                definition: "The crime of betraying your country",
+                example: "Signers of the Declaration could be hanged for treason against Britain",
+                category: "Declaration"
+            },
+            {
+                term: "Abolish",
+                definition: "To completely eliminate or destroy something",
+                example: "The Declaration says people can abolish government when it becomes destructive",
+                category: "Declaration"
+            },
+            {
+                term: "Usurpations",
+                definition: "Illegal seizures of power or rights",
+                example: "Jefferson accused the king of repeated usurpations of colonists' rights",
+                category: "Declaration"
+            }
+        ];
+
+        const questions = [
+            {
+                question: "The Proclamation of 1763 angered colonists because it:",
+                options: [
+                    "Raised taxes on tea and paper",
+                    "Forced them to house British soldiers",
+                    "Prevented them from settling west of the Appalachian Mountains",
+                    "Closed Boston Harbor"
+                ],
+                correct: 2,
+                explanation: "The Proclamation of 1763 banned colonists from settling west of the Appalachian Mountains. King George wanted to avoid conflicts with Native Americans, but colonists saw this as limiting their freedom and economic opportunities.",
+                topic: "Causes of Unrest"
+            },
+            {
+                question: "The Quartering Act required colonists to:",
+                options: [
+                    "Pay a tax on all printed materials",
+                    "Provide housing and supplies for British soldiers",
+                    "Attend church services every Sunday",
+                    "Send their children to British schools"
+                ],
+                correct: 1,
+                explanation: "The Quartering Act forced colonists to provide housing, food, and supplies to British soldiers. This was invasive and expensive, making colonists feel like their homes were being violated by an occupying army.",
+                topic: "Causes of Unrest"
+            },
+            {
+                question: "The colonial slogan 'No taxation without representation' meant that:",
+                options: [
+                    "Colonists refused to pay any taxes to anyone",
+                    "Colonists believed they should only be taxed by their own elected representatives",
+                    "Only British citizens should pay taxes",
+                    "Taxes should be eliminated completely"
+                ],
+                correct: 1,
+                explanation: "Colonists believed they should only be taxed by legislatures where they had elected representatives (like their colonial assemblies), not by British Parliament where they had no voice. This was a key principle behind their resistance.",
+                topic: "Causes of Unrest"
+            },
+            {
+                question: "The Stamp Act taxed colonists on:",
+                options: [
+                    "Imported goods like tea and glass",
+                    "Land ownership in the western territories",
+                    "Printed materials like newspapers and legal documents",
+                    "Clothing and household items"
+                ],
+                correct: 2,
+                explanation: "The Stamp Act (1765) required colonists to buy special stamped paper for newspapers, legal documents, pamphlets, and even playing cards. This was the first direct tax on colonists and affected nearly everyone, sparking widespread protests.",
+                topic: "Causes of Unrest"
+            },
+            {
+                question: "Which event involved British soldiers firing into a crowd, killing 5 people including Crispus Attucks?",
+                options: [
+                    "The Boston Tea Party",
+                    "The Boston Massacre",
+                    "Lexington and Concord",
+                    "The Intolerable Acts"
+                ],
+                correct: 1,
+                explanation: "The Boston Massacre (1770) occurred when British soldiers fired into a crowd of colonists, killing five people including Crispus Attucks, a Black sailor. Patriots used this event as propaganda to show British cruelty.",
+                topic: "Causes of Unrest"
+            },
+            {
+                question: "The Boston Tea Party was a colonial protest against:",
+                options: [
+                    "The Quartering Act",
+                    "The Stamp Act",
+                    "Taxes on tea imposed by the Townshend Acts",
+                    "The Proclamation of 1763"
+                ],
+                correct: 2,
+                explanation: "The Boston Tea Party (1773) was a protest against the tea tax from the Townshend Acts. Colonists, some disguised as Native Americans, dumped 342 chests of British tea into Boston Harbor to protest taxation without representation.",
+                topic: "Causes of Unrest"
+            },
+            {
+                question: "The Intolerable Acts were Britain's response to:",
+                options: [
+                    "The Stamp Act protests",
+                    "The Boston Tea Party",
+                    "The First Continental Congress",
+                    "Lexington and Concord"
+                ],
+                correct: 1,
+                explanation: "The Intolerable Acts (also called Coercive Acts) were passed in 1774 to punish Massachusetts for the Boston Tea Party. They closed Boston Harbor, removed self-government, and strengthened the Quartering Act.",
+                topic: "Causes of Unrest"
+            },
+            {
+                question: "The First Continental Congress met in Philadelphia to:",
+                options: [
+                    "Declare independence from Britain",
+                    "Discuss how to respond to British policies and organize a boycott",
+                    "Sign the Declaration of Independence",
+                    "Elect George Washington as president"
+                ],
+                correct: 1,
+                explanation: "The First Continental Congress (1774) brought together delegates from 12 of the 13 colonies to discuss coordinated responses to the Intolerable Acts. They organized a boycott and prepared for possible armed conflict.",
+                topic: "Causes of Unrest"
+            },
+            {
+                question: "The Battles of Lexington and Concord marked:",
+                options: [
+                    "The end of the Revolutionary War",
+                    "The signing of the Declaration of Independence",
+                    "The first military engagement of the Revolutionary War",
+                    "The repeal of the Stamp Act"
+                ],
+                correct: 2,
+                explanation: "Lexington and Concord (April 1775) was 'the shot heard round the world' - the first military engagement between British troops and colonial minutemen. This marked the transition from protest to armed rebellion.",
+                topic: "Causes of Unrest"
+            },
+            {
+                question: "In the 1776 musical, who was the main advocate pushing for independence?",
+                options: [
+                    "Benjamin Franklin",
+                    "John Adams",
+                    "Thomas Jefferson",
+                    "George Washington"
+                ],
+                correct: 1,
+                explanation: "John Adams was frustrated with Congress's reluctance to declare independence. The musical shows him constantly pushing the delegates to take action, even though many thought he was too aggressive.",
+                topic: "1776 Musical"
+            },
+            {
+                question: "According to the musical, why didn't Thomas Jefferson initially want to write the Declaration?",
+                options: [
+                    "He didn't believe in independence",
+                    "He was too busy with military duties",
+                    "He wanted to see his wife",
+                    "He thought someone else was better qualified"
+                ],
+                correct: 2,
+                explanation: "Jefferson was homesick and wanted to return to Virginia to see his wife Martha, who was in poor health. This made him reluctant to take on the writing task, even though he was chosen for his writing skills.",
+                topic: "1776 Musical"
+            },
+            {
+                question: "Who were the three most important members of the committee to write the Declaration?",
+                options: [
+                    "Adams, Washington, and Jefferson",
+                    "Franklin, Washington, and Adams",
+                    "Adams, Franklin, and Jefferson",
+                    "Jefferson, Madison, and Hamilton"
+                ],
+                correct: 2,
+                explanation: "The Committee of Five included Adams, Franklin, and Jefferson as the main contributors. Adams convinced Jefferson to write it, and Franklin helped edit. The other two members (Sherman and Livingston) played smaller roles.",
+                topic: "1776 Musical"
+            },
+            {
+                question: "In the slavery debate scene, who objected to the anti-slavery language?",
+                options: [
+                    "John Adams from Massachusetts",
+                    "Benjamin Franklin from Pennsylvania",
+                    "Edward Rutledge from South Carolina",
+                    "Thomas Jefferson from Virginia"
+                ],
+                correct: 2,
+                explanation: "Edward Rutledge from South Carolina objected because slavery was central to the Southern economy. He threatened that Southern colonies would not support independence if the anti-slavery language remained.",
+                topic: "1776 Musical"
+            },
+            {
+                question: "Why did Adams and Franklin agree to remove the anti-slavery language?",
+                options: [
+                    "They personally supported slavery",
+                    "They needed all 13 colonies to unite for independence",
+                    "King George demanded its removal",
+                    "They planned to address slavery later in the Constitution"
+                ],
+                correct: 1,
+                explanation: "Adams and Franklin faced an impossible choice: keep the anti-slavery language and lose Southern support, or remove it to keep all 13 colonies united. They chose unity for immediate independence, compromising on slavery.",
+                topic: "1776 Musical"
+            },
+            {
+                question: "Benjamin Franklin's quote 'If we do not hang together, we shall most assuredly hang separately' meant:",
+                options: [
+                    "They needed to celebrate their victory",
+                    "They should all move to different colonies",
+                    "If they didn't unite, the British would execute them individually for treason",
+                    "Hanging was a common punishment in colonial times"
+                ],
+                correct: 2,
+                explanation: "Franklin's play on words meant they needed to 'hang together' (stick together/unite) or they would 'hang separately' (be executed for treason). It emphasized the life-or-death stakes of signing the Declaration.",
+                topic: "1776 Musical"
+            },
+            {
+                question: "A 'Patriot' during the Revolutionary Era was someone who:",
+                options: [
+                    "Remained loyal to King George III",
+                    "Supported independence from Britain",
+                    "Refused to take sides in the conflict",
+                    "Moved to Canada to avoid the war"
+                ],
+                correct: 1,
+                explanation: "Patriots were colonists who supported independence from Britain and were willing to fight for it. They believed British policies violated their rights and that the colonies should be self-governing.",
+                topic: "Uncovering Loyalties"
+            },
+            {
+                question: "A 'Loyalist' (also called a Tory) was someone who:",
+                options: [
+                    "Supported independence from Britain",
+                    "Remained loyal to the British Crown",
+                    "Fought for Native American rights",
+                    "Worked as a spy for both sides"
+                ],
+                correct: 1,
+                explanation: "Loyalists remained loyal to King George III and Britain. They might have had family ties to Britain, business connections, government positions, or feared the chaos of revolution.",
+                topic: "Uncovering Loyalties"
+            },
+            {
+                question: "Someone who was 'neutral' during the Revolutionary War:",
+                options: [
+                    "Actively supported the Patriots",
+                    "Actively supported the Loyalists",
+                    "Did not take sides in the conflict",
+                    "Fought for whichever side paid more"
+                ],
+                correct: 2,
+                explanation: "Neutral colonists refused to take sides. They might have feared retaliation, had divided family loyalties, held religious beliefs against violence, or simply wanted to protect their property regardless of who won.",
+                topic: "Uncovering Loyalties"
+            },
+            {
+                question: "Which group might have been MOST likely to side with the British because they hoped for freedom?",
+                options: [
+                    "Wealthy colonial merchants",
+                    "Enslaved people",
+                    "Native Americans",
+                    "Indentured servants"
+                ],
+                correct: 1,
+                explanation: "Lord Dunmore's Proclamation (1775) promised freedom to enslaved people who joined British forces. Many enslaved people saw the British as offering a path to liberty that Patriots would not.",
+                topic: "Uncovering Loyalties"
+            },
+            {
+                question: "Why might different people have had different perspectives on independence?",
+                options: [
+                    "Their background, identity, and circumstances shaped their viewpoints",
+                    "Some people were better educated than others",
+                    "Everyone in each colony thought the same way",
+                    "Only wealthy people had perspectives worth considering"
+                ],
+                correct: 0,
+                explanation: "Perspective was shaped by identity - enslaved people wanted freedom, Native Americans worried about land, women had no political voice, wealthy colonists weighed economic interests. Different stakes = different viewpoints.",
+                topic: "Uncovering Loyalties"
+            },
+            {
+                question: "'Unalienable rights' in the Declaration of Independence means:",
+                options: [
+                    "Rights that can be taken away by the government",
+                    "Rights that cannot be taken away",
+                    "Rights only for wealthy white men",
+                    "Rights that must be earned through service"
+                ],
+                correct: 1,
+                explanation: "Unalienable rights cannot be taken away, given up, or transferred - they belong to all people simply by virtue of being human. Jefferson argued these rights were 'self-evident' and given by the Creator.",
+                topic: "Declaration"
+            },
+            {
+                question: "The three unalienable rights specifically mentioned in the Declaration are:",
+                options: [
+                    "Freedom, justice, and equality",
+                    "Life, liberty, and the pursuit of happiness",
+                    "Liberty, property, and security",
+                    "Life, freedom, and prosperity"
+                ],
+                correct: 1,
+                explanation: "Jefferson wrote 'We hold these truths to be self-evident, that all men are created equal, that they are endowed by their Creator with certain unalienable Rights, that among these are Life, Liberty and the pursuit of Happiness.'",
+                topic: "Declaration"
+            },
+            {
+                question: "'Consent of the governed' means:",
+                options: [
+                    "The government can do whatever it wants",
+                    "Only rich people should vote",
+                    "The government gets its power from the permission of the people",
+                    "Kings have divine right to rule"
+                ],
+                correct: 2,
+                explanation: "Consent of the governed means government only has legitimate authority if the people agree to be governed. This was revolutionary - it challenged the idea of monarchy based on divine right.",
+                topic: "Declaration"
+            },
+            {
+                question: "According to the Declaration, what should people do when government becomes destructive?",
+                options: [
+                    "Accept it because rebellion is wrong",
+                    "Move to a different country",
+                    "They have the right to change or abolish that government",
+                    "Wait for the next election"
+                ],
+                correct: 2,
+                explanation: "The Declaration states that when government repeatedly violates people's rights and becomes destructive, 'it is the Right of the People to alter or to abolish it, and to institute new Government.' This justified revolution.",
+                topic: "Declaration"
+            },
+            {
+                question: "The Declaration of Independence accused King George III of:",
+                options: [
+                    "Being too generous with the colonies",
+                    "Multiple acts of tyranny and taking away colonists' rights",
+                    "Not paying attention to the colonies",
+                    "Starting the French and Indian War"
+                ],
+                correct: 1,
+                explanation: "The Declaration lists over 25 grievances against King George - dissolving legislatures, imposing taxes without consent, quartering soldiers, blocking trade, denying trial by jury, and more. This documented his tyranny.",
+                topic: "Declaration"
+            },
+            {
+                question: "The colonists tried to resolve issues with Britain peacefully before declaring independence. This shows:",
+                options: [
+                    "The colonists were weak and afraid",
+                    "Independence was a last resort after peaceful attempts failed",
+                    "King George was willing to compromise",
+                    "The colonists never really wanted independence"
+                ],
+                correct: 1,
+                explanation: "The Declaration states they tried petitions and appeals many times ('In every stage of these Oppressions We have Petitioned for Redress'). This shows independence was justified only after exhausting peaceful solutions.",
+                topic: "Declaration"
+            },
+            {
+                question: "Whose voices and rights were LEFT OUT when Jefferson wrote 'all men are created equal'?",
+                options: [
+                    "Women, enslaved people, and Native Americans",
+                    "Poor white men",
+                    "Loyalists",
+                    "British soldiers"
+                ],
+                correct: 0,
+                explanation: "The Declaration's ideals excluded women (who couldn't vote or own property), enslaved people (who were considered property), and Native Americans (called 'merciless savages'). Even some white men without property couldn't vote.",
+                topic: "Declaration"
+            },
+            {
+                question: "The concept of 'escalation' means:",
+                options: [
+                    "Small conflicts build into larger ones over time",
+                    "Britain became weaker as time went on",
+                    "Colonists immediately wanted war after the first conflict",
+                    "Events happened in random order with no connection"
+                ],
+                correct: 0,
+                explanation: "Escalation describes how the conflict intensified over time - each British action led to stronger colonial reactions, which led to harsher British responses, creating a cycle that eventually led to war.",
+                topic: "Connections"
+            },
+            {
+                question: "Why does the ORDER of events matter when studying the causes of the Revolutionary War?",
+                options: [
+                    "It doesn't matter - events could have happened in any order",
+                    "Each event built on previous tensions, showing how conflicts escalated",
+                    "Only the first event matters",
+                    "Only the last event matters"
+                ],
+                correct: 1,
+                explanation: "The order matters because it shows escalation - how repeated grievances accumulated and peaceful attempts failed, making war seem inevitable by 1775. The pattern reveals cause-and-effect relationships.",
+                topic: "Connections"
+            },
+            {
+                question: "What connects ALL four activities (Causes of Unrest, 1776, Uncovering Loyalties, Declaration Translation)?",
+                options: [
+                    "They all focus on military battles",
+                    "They all show that everyone agreed about independence",
+                    "They help us understand WHY colonists declared independence and whose perspectives were included vs. excluded",
+                    "They prove that Britain was always wrong"
+                ],
+                correct: 2,
+                explanation: "All four activities connect to the unit's driving question: 'Whose story gets told? Whose gets left out?' They help us understand both the reasons for independence AND the voices missing from the story.",
+                topic: "Connections"
+            }
+        ];
+
+        // ==================== STATE MANAGEMENT ====================
+        
+        let currentCardIndex = 0;
+        let cardFlipped = false;
+        let vocabProgress = JSON.parse(localStorage.getItem('vocabProgress')) || [];
+        let practiceProgress = JSON.parse(localStorage.getItem('practiceProgress')) || {};
+        let testResults = JSON.parse(localStorage.getItem('testResults')) || [];
+        let currentPracticeQuestions = [];
+        let currentPracticeIndex = 0;
+
+        // ==================== NAVIGATION ====================
+        
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            if (sectionId === 'home') {
+                updateHomeProgress();
+            } else if (sectionId === 'vocab') {
+                loadFlashcard();
+                updateVocabProgress();
+            } else if (sectionId === 'practice') {
+                loadNewPracticeSet();
+            } else if (sectionId === 'shortanswer') {
+                loadShortAnswers();
+            } else if (sectionId === 'test') {
+                loadTest();
+            } else if (sectionId === 'progress') {
+                loadProgressPage();
+            }
+        }
+
+        // ==================== HOME PAGE ====================
+        
+        function updateHomeProgress() {
+            const vocabMastery = vocabulary.length > 0 ? (vocabProgress.length / vocabulary.length * 100).toFixed(0) : 0;
+            const practiceTotal = Object.keys(practiceProgress).length;
+            const practiceCorrect = Object.values(practiceProgress).filter(v => v === true).length;
+            const practicePercent = practiceTotal > 0 ? (practiceCorrect / practiceTotal * 100).toFixed(0) : 0;
+            
+            const testsTotal = testResults.length;
+            const avgTestScore = testsTotal > 0 
+                ? (testResults.reduce((sum, r) => sum + r.score, 0) / testsTotal).toFixed(0)
+                : 0;
+
+            let progressHTML = '<div class="stats-grid">';
+            progressHTML += `
+                <div class="stat-card">
+                    <div class="number">${vocabMastery}%</div>
+                    <div class="label">Vocabulary You Know</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">${practicePercent}%</div>
+                    <div class="label">Practice Questions Right</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">${testsTotal}</div>
+                    <div class="label">Practice Tests Done</div>
+                </div>
+            `;
+            
+            if (testsTotal > 0) {
+                progressHTML += `
+                    <div class="stat-card">
+                        <div class="number">${avgTestScore}%</div>
+                        <div class="label">Average Test Score</div>
+                    </div>
+                `;
+            }
+            
+            progressHTML += '</div>';
+
+            // Add readiness assessment with more encouraging language
+            const totalProgress = (parseFloat(vocabMastery) * 0.4) + (parseFloat(practicePercent) * 0.4) + (parseFloat(avgTestScore) * 0.2);
+            
+            if (totalProgress >= 80) {
+                progressHTML += `
+                    <div class="alert success">
+                        <i class="fas fa-star"></i>
+                        <div>
+                            <strong>You're crushing it!</strong> Your progress is ${totalProgress.toFixed(0)}%. You're totally ready for the real test!
+                        </div>
+                    </div>
+                `;
+            } else if (totalProgress >= 60) {
+                progressHTML += `
+                    <div class="alert info">
+                        <i class="fas fa-dumbbell"></i>
+                        <div>
+                            <strong>You're doing great!</strong> Your progress is ${totalProgress.toFixed(0)}%. Keep practicing and you'll be ready soon!
+                        </div>
+                    </div>
+                `;
+            } else if (practiceTotal > 0 || vocabProgress.length > 0) {
+                progressHTML += `
+                    <div class="alert info">
+                        <i class="fas fa-book-open"></i>
+                        <div>
+                            <strong>Good start!</strong> Your progress is ${totalProgress.toFixed(0)}%. Keep studying the vocabulary and doing practice questions!
+                        </div>
+                    </div>
+                `;
+            } else {
+                progressHTML += `
+                    <div class="alert info">
+                        <i class="fas fa-hand-wave"></i>
+                        <div>
+                            <strong>Welcome!</strong> Start by learning vocabulary, then try some practice questions. You've got this!
+                        </div>
+                    </div>
+                `;
+            }
+
+            const progressContainer = document.getElementById('overallProgress');
+            if (progressContainer) {
+                progressContainer.innerHTML = progressHTML;
+            }
+        }
+
+        // ==================== VOCABULARY FLASHCARDS ====================
+        
+        function loadFlashcard() {
+            cardFlipped = false;
+            const card = vocabulary[currentCardIndex];
+            
+            const cardHTML = `
+                <div class="flashcard" onclick="flipCard()">
+                    <div id="cardFront">
+                        <h3>${card.term}</h3>
+                        <p style="margin-top: 10px; opacity: 0.8;">(${card.category})</p>
+                    </div>
+                    <div id="cardBack" style="display: none;">
+                        <div class="definition">${card.definition}</div>
+                        <div class="example"><strong>Example:</strong> ${card.example}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('flashcardContainer').innerHTML = cardHTML;
+        }
+
+        function flipCard() {
+            cardFlipped = !cardFlipped;
+            document.getElementById('cardFront').style.display = cardFlipped ? 'none' : 'block';
+            document.getElementById('cardBack').style.display = cardFlipped ? 'block' : 'none';
+        }
+
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % vocabulary.length;
+            loadFlashcard();
+            updateVocabProgress();
+        }
+
+        function prevCard() {
+            currentCardIndex = (currentCardIndex - 1 + vocabulary.length) % vocabulary.length;
+            loadFlashcard();
+            updateVocabProgress();
+        }
+
+        function markKnown() {
+            const term = vocabulary[currentCardIndex].term;
+            if (!vocabProgress.includes(term)) {
+                vocabProgress.push(term);
+                localStorage.setItem('vocabProgress', JSON.stringify(vocabProgress));
+            }
+            nextCard();
+        }
+
+        function shuffleCards() {
+            for (let i = vocabulary.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [vocabulary[i], vocabulary[j]] = [vocabulary[j], vocabulary[i]];
+            }
+            currentCardIndex = 0;
+            loadFlashcard();
+        }
+
+        function updateVocabProgress() {
+            const percent = (vocabProgress.length / vocabulary.length * 100).toFixed(0);
+            document.getElementById('vocabProgress').textContent = `${vocabProgress.length}/${vocabulary.length} terms mastered (${percent}%)`;
+            document.getElementById('vocabProgress').style.width = `${percent}%`;
+        }
+
+        function resetVocabProgress() {
+            if (confirm('Are you sure you want to reset your vocabulary progress?')) {
+                vocabProgress = [];
+                localStorage.setItem('vocabProgress', JSON.stringify(vocabProgress));
+                updateVocabProgress();
+            }
+        }
+
+        // ==================== PRACTICE QUESTIONS ====================
+        
+        function loadNewPracticeSet() {
+            // Select 10 random questions
+            const shuffled = [...questions].sort(() => Math.random() - 0.5);
+            currentPracticeQuestions = shuffled.slice(0, 10);
+            currentPracticeIndex = 0;
+            loadPracticeQuestion();
+        }
+
+        function loadPracticeQuestion() {
+            if (currentPracticeIndex >= currentPracticeQuestions.length) {
+                document.getElementById('practiceContainer').innerHTML = `
+                    <div class="alert success">
+                        <span style="font-size: 2em;">🎉</span>
+                        <div>
+                            <strong>Practice Set Complete!</strong> You've finished this set of questions. Click "New Practice Set" to try more!
+                        </div>
+                    </div>
+                `;
+                updatePracticeProgress();
+                return;
+            }
+
+            const question = currentPracticeQuestions[currentPracticeIndex];
+            const questionId = questions.indexOf(question);
+            
+            let questionHTML = `
+                <div class="question-card">
+                    <h3>Question ${currentPracticeIndex + 1} of ${currentPracticeQuestions.length}</h3>
+                    <p style="margin: 15px 0; font-size: 1.1em;"><strong>${question.question}</strong></p>
+                    <div class="options">
+            `;
+            
+            question.options.forEach((option, index) => {
+                questionHTML += `
+                    <div class="option" onclick="selectPracticeOption(${questionId}, ${index})" id="practice-option-${index}">
+                        <strong>${String.fromCharCode(65 + index)}.</strong> ${option}
+                    </div>
+                `;
+            });
+            
+            questionHTML += `
+                    </div>
+                    <div id="practice-feedback" class="feedback"></div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" id="check-btn" onclick="checkPracticeAnswer(${questionId})" style="display: none;">Check Answer</button>
+                        <button class="btn btn-primary" id="next-btn" onclick="nextPracticeQuestion()" style="display: none;">Next Question →</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('practiceContainer').innerHTML = questionHTML;
+            updatePracticeProgress();
+        }
+
+        let selectedPracticeOption = -1;
+
+        function selectPracticeOption(questionId, optionIndex) {
+            // Remove previous selection
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Mark new selection
+            document.getElementById(`practice-option-${optionIndex}`).classList.add('selected');
+            selectedPracticeOption = optionIndex;
+            
+            // Show check button
+            document.getElementById('check-btn').style.display = 'inline-block';
+        }
+
+        function checkPracticeAnswer(questionId) {
+            const question = questions[questionId];
+            const isCorrect = selectedPracticeOption === question.correct;
+            
+            // Update progress
+            practiceProgress[questionId] = isCorrect;
+            localStorage.setItem('practiceProgress', JSON.stringify(practiceProgress));
+            
+            // Show visual feedback on options
+            document.querySelectorAll('.option').forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === question.correct) {
+                    opt.classList.add('correct');
+                } else if (index === selectedPracticeOption && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+            
+            // Show detailed feedback with highlighted vocab terms
+            const feedbackDiv = document.getElementById('practice-feedback');
+            feedbackDiv.className = `feedback show ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackDiv.innerHTML = `
+                <h4>${isCorrect ? '<i class="fas fa-check-circle"></i> Yes! You got it!' : '<i class="fas fa-times-circle"></i> Not quite - but that\'s okay!'}</h4>
+                <p><strong>Why this answer:</strong> ${highlightVocabTerms(question.explanation)}</p>
+                <p style="margin-top: 10px;"><strong>Topic:</strong> ${question.topic}</p>
+            `;
+            
+            // Hide check button, show next button
+            document.getElementById('check-btn').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        function nextPracticeQuestion() {
+            currentPracticeIndex++;
+            selectedPracticeOption = -1;
+            loadPracticeQuestion();
+        }
+
+        function updatePracticeProgress() {
+            const text = `Question ${currentPracticeIndex + 1} of ${currentPracticeQuestions.length}`;
+            const percent = ((currentPracticeIndex) / currentPracticeQuestions.length * 100).toFixed(0);
+            document.getElementById('practiceProgress').textContent = text;
+            document.getElementById('practiceProgress').style.width = `${percent}%`;
+        }
+
+        // ==================== PRACTICE TEST ====================
+        
+        let testAnswers = {};
+        
+        function loadTest() {
+            testAnswers = {};
+            
+            let testHTML = `
+                <div class="progress-bar">
+                    <div class="progress-fill" id="testProgress">0 of 30 answered</div>
+                </div>
+                <div id="testQuestions">
+            `;
+            
+            questions.forEach((question, qIndex) => {
+                testHTML += `
+                    <div class="question-card">
+                        <h3>Question ${qIndex + 1}</h3>
+                        <p style="margin: 15px 0; font-size: 1.1em;"><strong>${question.question}</strong></p>
+                        <div class="options">
+                `;
+                
+                question.options.forEach((option, optIndex) => {
+                    testHTML += `
+                        <div class="option" onclick="selectTestOption(${qIndex}, ${optIndex})" id="test-q${qIndex}-opt${optIndex}">
+                            <strong>${String.fromCharCode(65 + optIndex)}.</strong> ${option}
+                        </div>
+                    `;
+                });
+                
+                testHTML += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            testHTML += `
+                </div>
+                <div style="text-align: center; margin: 30px 0;">
+                    <button class="btn btn-primary" onclick="gradeTest()" style="font-size: 1.2em; padding: 15px 40px;">
+                        Submit Test for Grading
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('testContainer').innerHTML = testHTML;
+            updateTestProgress();
+        }
+
+        function selectTestOption(questionIndex, optionIndex) {
+            // Clear previous selection for this question
+            for (let i = 0; i < 4; i++) {
+                const opt = document.getElementById(`test-q${questionIndex}-opt${i}`);
+                if (opt) opt.classList.remove('selected');
+            }
+            
+            // Mark new selection
+            document.getElementById(`test-q${questionIndex}-opt${optionIndex}`).classList.add('selected');
+            testAnswers[questionIndex] = optionIndex;
+            
+            updateTestProgress();
+        }
+
+        function updateTestProgress() {
+            const answered = Object.keys(testAnswers).length;
+            const percent = (answered / questions.length * 100).toFixed(0);
+            document.getElementById('testProgress').textContent = `${answered} of ${questions.length} answered`;
+            document.getElementById('testProgress').style.width = `${percent}%`;
+        }
+
+        function gradeTest() {
+            if (Object.keys(testAnswers).length < questions.length) {
+                if (!confirm(`You've only answered ${Object.keys(testAnswers).length} of ${questions.length} questions. Submit anyway?`)) {
+                    return;
+                }
+            }
+
+            let correct = 0;
+            let topicScores = {};
+            let incorrectQuestions = [];
+            
+            questions.forEach((question, qIndex) => {
+                const userAnswer = testAnswers[qIndex];
+                const isCorrect = userAnswer === question.correct;
+                
+                if (isCorrect) {
+                    correct++;
+                } else {
+                    incorrectQuestions.push({
+                        question: question.question,
+                        topic: question.topic,
+                        correctAnswer: question.options[question.correct],
+                        explanation: question.explanation
+                    });
+                }
+                
+                // Track by topic
+                if (!topicScores[question.topic]) {
+                    topicScores[question.topic] = { correct: 0, total: 0 };
+                }
+                topicScores[question.topic].total++;
+                if (isCorrect) topicScores[question.topic].correct++;
+                
+                // Visual feedback
+                const optDiv = document.getElementById(`test-q${qIndex}-opt${question.correct}`);
+                if (optDiv) optDiv.classList.add('correct');
+                
+                if (userAnswer !== undefined && userAnswer !== question.correct) {
+                    const wrongDiv = document.getElementById(`test-q${qIndex}-opt${userAnswer}`);
+                    if (wrongDiv) wrongDiv.classList.add('incorrect');
+                }
+            });
+
+            const score = (correct / questions.length * 100).toFixed(0);
+            
+            // Save result
+            testResults.push({
+                score: parseInt(score),
+                date: new Date().toISOString(),
+                topicScores: topicScores
+            });
+            localStorage.setItem('testResults', JSON.stringify(testResults));
+
+            // Display results
+            let resultsHTML = `
+                <div class="alert ${score >= 80 ? 'success' : 'info'}">
+                    <i class="fas ${score >= 80 ? 'fa-trophy' : 'fa-chart-bar'}"></i>
+                    <div>
+                        <h2 style="margin-bottom: 10px;">Test Complete!</h2>
+                        <p style="font-size: 1.3em;"><strong>You got ${correct} out of ${questions.length} correct (${score}%)</strong></p>
+                        ${score >= 90
+                            ? '<p>Wow! You totally know this stuff! You\'re definitely ready! <i class="fas fa-star"></i></p>'
+                            : score >= 80 
+                            ? '<p>Great job! You\'re ready for the real test!</p>'
+                            : score >= 70
+                            ? '<p>Good work! Check out what you missed below and you\'ll be ready!</p>'
+                            : score >= 60
+                            ? '<p>You\'re getting there! Study the topics below and try again!</p>'
+                            : '<p>Keep studying! Focus on the areas below where you need more practice.</p>'
+                        }
+                    </div>
+                </div>
+
+                <h3 style="margin: 30px 0 15px 0;">How You Did On Each Topic:</h3>
+                <div class="stats-grid">
+            `;
+
+            Object.entries(topicScores).forEach(([topic, scores]) => {
+                const topicPercent = (scores.correct / scores.total * 100).toFixed(0);
+                resultsHTML += `
+                    <div class="stat-card">
+                        <div class="number">${topicPercent}%</div>
+                        <div class="label">${topic}<br>(${scores.correct}/${scores.total})</div>
+                    </div>
+                `;
+            });
+
+            resultsHTML += '</div>';
+
+            if (incorrectQuestions.length > 0) {
+                resultsHTML += `
+                    <div class="weakness-list">
+                        <h3><i class="fas fa-pencil-alt"></i> Questions to Study Again:</h3>
+                `;
+                
+                incorrectQuestions.forEach((q, index) => {
+                    resultsHTML += `
+                        <div class="weakness-item">
+                            <div>
+                                <strong>${q.question}</strong><br>
+                                <small style="color: #666;">Topic: ${q.topic}</small><br>
+                                <small style="color: #059669;"><strong>The right answer:</strong> ${q.correctAnswer}</small><br>
+                                <small>${highlightVocabTerms(q.explanation)}</small>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                resultsHTML += '</div>';
+            }
+
+            resultsHTML += `
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="loadTest()">Take Another Practice Test</button>
+                    <button class="btn btn-secondary" onclick="showSection('home')">Back to Home</button>
+                </div>
+            `;
+
+            document.getElementById('testContainer').innerHTML = resultsHTML;
+        }
+
+        // ==================== PROGRESS PAGE ====================
+        
+        function loadProgressPage() {
+            // Calculate stats
+            const vocabMastery = (vocabProgress.length / vocabulary.length * 100).toFixed(0);
+            const practiceTotal = Object.keys(practiceProgress).length;
+            const practiceCorrect = Object.values(practiceProgress).filter(v => v === true).length;
+            const practicePercent = practiceTotal > 0 ? (practiceCorrect / practiceTotal * 100).toFixed(0) : 0;
+            
+            const testsTotal = testResults.length;
+            const avgTestScore = testsTotal > 0 
+                ? (testResults.reduce((sum, r) => sum + r.score, 0) / testsTotal).toFixed(0)
+                : 0;
+
+            // Stats cards
+            let statsHTML = `
+                <div class="stat-card">
+                    <div class="number">${vocabProgress.length}/${vocabulary.length}</div>
+                    <div class="label">Vocabulary Words You Know</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">${practiceCorrect}/${practiceTotal}</div>
+                    <div class="label">Practice Questions Right</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">${testsTotal}</div>
+                    <div class="label">Practice Tests Done</div>
+                </div>
+            `;
+            
+            if (testsTotal > 0) {
+                statsHTML += `
+                    <div class="stat-card">
+                        <div class="number">${avgTestScore}%</div>
+                        <div class="label">Average Test Score</div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('statsContainer').innerHTML = statsHTML;
+
+            // Weakness analysis
+            const unknownVocab = vocabulary.filter(v => !vocabProgress.includes(v.term));
+            const incorrectPractice = Object.entries(practiceProgress)
+                .filter(([qId, correct]) => !correct)
+                .map(([qId]) => questions[parseInt(qId)]);
+
+            let weaknessHTML = '';
+            
+            if (unknownVocab.length > 0 || incorrectPractice.length > 0) {
+                weaknessHTML = '<div class="weakness-list"><h3><i class="fas fa-exclamation-triangle"></i> What You Should Study More:</h3>';
+                
+                if (unknownVocab.length > 0) {
+                    weaknessHTML += `<p><strong>Vocabulary words you haven't learned yet (${unknownVocab.length} words):</strong></p>`;
+                    unknownVocab.slice(0, 5).forEach(v => {
+                        weaknessHTML += `<div class="weakness-item">${v.term} <span style="color: #666;">(${v.category})</span></div>`;
+                    });
+                    if (unknownVocab.length > 5) {
+                        weaknessHTML += `<p style="margin-top: 10px;"><em>...and ${unknownVocab.length - 5} more. Go study them in the Vocabulary section!</em></p>`;
+                    }
+                }
+                
+                if (incorrectPractice.length > 0) {
+                    const topicCounts = {};
+                    incorrectPractice.forEach(q => {
+                        topicCounts[q.topic] = (topicCounts[q.topic] || 0) + 1;
+                    });
+                    
+                    weaknessHTML += `<p style="margin-top: 15px;"><strong>Topics where you got questions wrong:</strong></p>`;
+                    Object.entries(topicCounts)
+                        .sort((a, b) => b[1] - a[1])
+                        .forEach(([topic, count]) => {
+                            weaknessHTML += `<div class="weakness-item">${topic} <span class="mastery-badge low">${count} wrong</span></div>`;
+                        });
+                }
+                
+                weaknessHTML += '</div>';
+            }
+            
+            document.getElementById('weaknessContainer').innerHTML = weaknessHTML;
+
+            // Strength analysis
+            let strengthHTML = '';
+            
+            if (vocabProgress.length > 0 || practiceCorrect > 0) {
+                strengthHTML = '<div class="strength-list"><h3><i class="fas fa-check-circle"></i> What You Already Know Really Well:</h3>';
+                
+                if (vocabProgress.length > 0) {
+                    const byCategory = {};
+                    vocabProgress.forEach(term => {
+                        const vocab = vocabulary.find(v => v.term === term);
+                        if (vocab) {
+                            byCategory[vocab.category] = (byCategory[vocab.category] || 0) + 1;
+                        }
+                    });
+                    
+                    strengthHTML += '<p><strong>Vocabulary you know, by category:</strong></p>';
+                    Object.entries(byCategory).forEach(([category, count]) => {
+                        const total = vocabulary.filter(v => v.category === category).length;
+                        const percent = (count / total * 100).toFixed(0);
+                        strengthHTML += `
+                            <div class="weakness-item">
+                                ${category} 
+                                <span class="mastery-badge ${percent >= 80 ? 'high' : percent >= 60 ? 'medium' : 'low'}">
+                                    ${count}/${total} (${percent}%)
+                                </span>
+                            </div>
+                        `;
+                    });
+                }
+                
+                if (testsTotal > 0) {
+                    const lastTest = testResults[testResults.length - 1];
+                    strengthHTML += '<p style="margin-top: 15px;"><strong>Your last test scores by topic:</strong></p>';
+                    Object.entries(lastTest.topicScores || {}).forEach(([topic, scores]) => {
+                        const percent = (scores.correct / scores.total * 100).toFixed(0);
+                        strengthHTML += `
+                            <div class="weakness-item">
+                                ${topic}
+                                <span class="mastery-badge ${percent >= 80 ? 'high' : percent >= 60 ? 'medium' : 'low'}">
+                                    ${percent}%
+                                </span>
+                            </div>
+                        `;
+                    });
+                }
+                
+                strengthHTML += '</div>';
+            }
+            
+            document.getElementById('strengthContainer').innerHTML = strengthHTML;
+        }
+
+        function resetAllProgress() {
+            if (confirm('Are you sure you want to reset ALL your progress? This cannot be undone!')) {
+                if (confirm('Really? This will delete all vocabulary progress, practice answers, and test results.')) {
+                    localStorage.clear();
+                    vocabProgress = [];
+                    practiceProgress = {};
+                    testResults = [];
+                    alert('All progress has been reset!');
+                    showSection('home');
+                }
+            }
+        }
+
+        // ==================== SHORT ANSWER PRACTICE ====================
+        
+        const shortAnswerQuestions = [
+            {
+                question: "The Tipping Point: Look at where you spent the MOST outrage points. Why did that event deserve the most? What made it cross the line from 'annoying' to 'unacceptable'?",
+                topic: "Causes of Unrest",
+                rubric: [
+                    "Names a SPECIFIC event (like Boston Massacre, Intolerable Acts, etc.)",
+                    "Explains WHY this event caused the most anger (3-4 sentences)",
+                    "Uses specific details from what you learned (not just 'it was unfair')",
+                    "Explains what made it a 'tipping point' - what was different about this event?"
+                ],
+                exemplar: "I gave the Intolerable Acts the most outrage points because they didn't just punish the people who did the Boston Tea Party - they punished everyone in Massachusetts. Britain closed Boston Harbor, which meant people couldn't work or get supplies, and they took away Massachusetts' right to govern themselves. What made this cross the line was that it showed Britain would use collective punishment and destroy an entire colony's freedom just to make a point. It proved that Britain didn't care about colonists' rights at all.",
+                sentenceStarters: [
+                    "I gave __________ the most points because...",
+                    "This event was more serious than others because...",
+                    "What made this cross the line was...",
+                    "This showed colonists that..."
+                ]
+            },
+            {
+                question: "The Build-Up: The colonists didn't rebel after the Proclamation of 1763, but they DID rebel after Lexington and Concord. What changed over those 12 years? Why does the ORDER of events matter?",
+                topic: "Causes of Unrest - Escalation",
+                rubric: [
+                    "Identifies the TIME SPAN (12 years from 1763-1775)",
+                    "Explains that multiple events built up over time",
+                    "Uses the word 'escalation' or describes how conflicts got worse",
+                    "Gives at least 2-3 specific examples of events",
+                    "Explains that peaceful solutions failed"
+                ],
+                exemplar: "Over those 12 years, the colonists tried many peaceful ways to solve problems with Britain, but each time Britain responded with harsher punishments. After the Stamp Act protests, Britain sent more troops. After the Boston Tea Party, they passed the Intolerable Acts. Each event made colonists angrier and more convinced that Britain wouldn't listen to them. The order matters because it shows escalation - how small conflicts built into bigger ones when neither side would compromise. By 1775 at Lexington and Concord, colonists felt they had no choice but to fight back because twelve years of petitions, boycotts, and peaceful protests had failed.",
+                sentenceStarters: [
+                    "Over 12 years, colonists...",
+                    "Each event made things worse because...",
+                    "The order matters because it shows...",
+                    "By 1775, colonists felt..."
+                ]
+            },
+            {
+                question: "The Slavery Debate in 1776: Explain the 'impossible choice' that John Adams and Benjamin Franklin faced. What did Jefferson originally write? Who objected? What was removed and why?",
+                topic: "1776 Musical",
+                rubric: [
+                    "States what Jefferson ORIGINALLY wrote (anti-slavery language)",
+                    "Names who objected (Edward Rutledge or South Carolina)",
+                    "Explains WHY they objected (economy, slavery was their 'way of life')",
+                    "Describes the 'impossible choice' clearly",
+                    "Explains what was removed",
+                    "Shows understanding this wasn't because Adams/Franklin supported slavery"
+                ],
+                exemplar: "Jefferson originally wrote language in the Declaration blaming King George for the slave trade and condemning slavery. Edward Rutledge from South Carolina objected because slavery was central to the Southern economy and their entire way of life. The impossible choice was this: keep the anti-slavery language and lose Southern support for independence, or remove it to keep all 13 colonies united. Adams and Franklin chose to remove the anti-slavery language because they believed that without all colonies united, they couldn't win independence at all. This meant slavery would continue in America even though the Declaration said 'all men are created equal.'",
+                sentenceStarters: [
+                    "Jefferson originally wrote...",
+                    "South Carolina objected because...",
+                    "The impossible choice was...",
+                    "Adams and Franklin removed it because...",
+                    "This meant that..."
+                ]
+            },
+            {
+                question: "Multiple Perspectives: Choose ONE group (enslaved people, Native Americans, women, or wealthy colonists). Explain why their perspective on independence was different from the 'standard' Patriot narrative.",
+                topic: "Uncovering Loyalties",
+                rubric: [
+                    "Chooses ONE specific group clearly",
+                    "Explains how their IDENTITY shaped their perspective",
+                    "Gives specific reasons why their viewpoint differed",
+                    "Uses examples from the activities",
+                    "Shows understanding that different groups had different concerns",
+                    "4-5 complete sentences"
+                ],
+                exemplar: "Enslaved people had a very different perspective on independence than white Patriots. While Patriots fought for 'liberty' from British 'tyranny,' enslaved people had no liberty at all and many of their oppressors were the same people declaring independence. Some enslaved people actually sided with the British because Lord Dunmore's Proclamation promised freedom to any enslaved person who joined British forces. From their perspective, the Revolution's talk of freedom was hypocritical since the Declaration said 'all men are created equal' but didn't include them. Their main concern was escaping slavery, not whether Britain or colonists controlled the government.",
+                sentenceStarters: [
+                    "[Group] had a different perspective because...",
+                    "While Patriots wanted...",
+                    "From their perspective...",
+                    "Their main concern was...",
+                    "They might have sided with..."
+                ]
+            },
+            {
+                question: "Unalienable Rights vs. Reality: The Declaration states 'all men are created equal' with rights to 'life, liberty, and the pursuit of happiness.' Whose rights were protected in 1776? Whose rights were ignored? Give specific examples.",
+                topic: "Declaration of Independence",
+                rubric: [
+                    "Identifies whose rights WERE protected (white men, property owners)",
+                    "Names at least 2-3 groups whose rights were NOT protected",
+                    "Gives specific examples of how they were excluded",
+                    "Explains the CONTRADICTION between ideals and reality",
+                    "Uses vocabulary from the Declaration",
+                    "4-5 complete sentences"
+                ],
+                exemplar: "In 1776, the Declaration's rights were really only protected for white men who owned property. They could vote, own land, participate in government, and make decisions for the new nation. However, the rights were completely ignored for several groups. Enslaved people had no liberty at all and were considered property, not people with rights. Women couldn't vote, hold office, or own property independently because of coverture laws. Native Americans were excluded and even called 'savages' in the Declaration, with their land rights completely ignored. The contradiction is huge - Jefferson wrote 'all men are created equal' while he himself enslaved people, showing that 'unalienable rights' were actually very alienable depending on your race and gender.",
+                sentenceStarters: [
+                    "The Declaration's rights protected...",
+                    "However, these groups were excluded:...",
+                    "For example, enslaved people...",
+                    "Women could not...",
+                    "This shows that..."
+                ]
+            }
+        ];
+
+        let currentShortAnswerIndex = 0;
+        let shortAnswerResponses = JSON.parse(localStorage.getItem('shortAnswerResponses')) || {};
+
+        function loadShortAnswers() {
+            currentShortAnswerIndex = 0;
+            loadShortAnswerQuestion();
+        }
+
+        function loadShortAnswerQuestion() {
+            if (currentShortAnswerIndex >= shortAnswerQuestions.length) {
+                document.getElementById('shortAnswerContainer').innerHTML = `
+                    <div class="alert success">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <strong>All Questions Complete!</strong> You've practiced all 5 short answer questions. Review your responses or start over to practice again!
+                        </div>
+                    </div>
+                `;
+                updateShortAnswerProgress();
+                return;
+            }
+
+            const question = shortAnswerQuestions[currentShortAnswerIndex];
+            const savedResponse = shortAnswerResponses[currentShortAnswerIndex] || '';
+            
+            let questionHTML = `
+                <div class="question-card">
+                    <h3>Question ${currentShortAnswerIndex + 1} of ${shortAnswerQuestions.length}</h3>
+                    <p style="margin: 15px 0; font-size: 1.1em; line-height: 1.6;"><strong>${question.question}</strong></p>
+                    <p style="color: #666; margin-bottom: 15px;"><strong>Topic:</strong> ${question.topic}</p>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0;">
+                        <strong>Sentence Starters (use these if you need help):</strong>
+                        <ul style="margin: 10px 0 0 20px;">
+                            ${question.sentenceStarters.map(starter => `<li>${starter}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <div style="margin: 20px 0;">
+                        <label style="display: block; margin-bottom: 10px; font-weight: 600;">Write your answer (4-5 sentences):</label>
+                        <textarea 
+                            id="shortAnswerText" 
+                            style="width: 100%; min-height: 200px; padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em; font-family: inherit; line-height: 1.6;"
+                            placeholder="Start typing your answer here..."
+                        >${savedResponse}</textarea>
+                    </div>
+
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn btn-primary" onclick="revealExemplar()"><i class="fas fa-eye"></i> Show Example Answer & Rubric</button>
+                    </div>
+
+                    <div id="exemplar-section" style="display: none;">
+                        <div style="background: #d1fae5; padding: 20px; border-radius: 10px; border-left: 5px solid #10b981; margin: 20px 0;">
+                            <h4 style="color: #065f46; margin-bottom: 10px;"><i class="fas fa-star"></i> Example Answer (What a good response looks like):</h4>
+                            <p style="line-height: 1.8;">${question.exemplar}</p>
+                        </div>
+
+                        <div style="background: #fff3cd; padding: 20px; border-radius: 10px; border-left: 5px solid #ffc107; margin: 20px 0;">
+                            <h4 style="color: #856404; margin-bottom: 10px;"><i class="fas fa-clipboard-check"></i> Self-Assessment Checklist:</h4>
+                            <p style="margin-bottom: 10px;">Compare your answer to this checklist. Did you:</p>
+                            <ul style="margin-left: 20px;">
+                                ${question.rubric.map(item => `<li style="margin: 8px 0;"><label><input type="checkbox"> ${item}</label></li>`).join('')}
+                            </ul>
+                        </div>
+
+                        <div style="text-align: center; margin: 20px 0;">
+                            <button class="btn btn-secondary" onclick="reviseAnswer()"><i class="fas fa-edit"></i> Revise My Answer</button>
+                            <button class="btn btn-primary" onclick="nextShortAnswer()"><i class="fas fa-arrow-right"></i> Next Question</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('shortAnswerContainer').innerHTML = questionHTML;
+            updateShortAnswerProgress();
+        }
+
+        function revealExemplar() {
+            // Save current response
+            const response = document.getElementById('shortAnswerText').value;
+            shortAnswerResponses[currentShortAnswerIndex] = response;
+            localStorage.setItem('shortAnswerResponses', JSON.stringify(shortAnswerResponses));
+
+            // Show exemplar and rubric
+            document.getElementById('exemplar-section').style.display = 'block';
+            
+            // Scroll to exemplar
+            document.getElementById('exemplar-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function reviseAnswer() {
+            // Hide exemplar and let them revise
+            document.getElementById('exemplar-section').style.display = 'none';
+            document.getElementById('shortAnswerText').focus();
+            
+            // Scroll back to text area
+            document.getElementById('shortAnswerText').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function nextShortAnswer() {
+            // Save current response
+            const response = document.getElementById('shortAnswerText').value;
+            shortAnswerResponses[currentShortAnswerIndex] = response;
+            localStorage.setItem('shortAnswerResponses', JSON.stringify(shortAnswerResponses));
+
+            // Move to next question
+            currentShortAnswerIndex++;
+            loadShortAnswerQuestion();
+        }
+
+        function updateShortAnswerProgress() {
+            const percent = ((currentShortAnswerIndex) / shortAnswerQuestions.length * 100).toFixed(0);
+            const progressEl = document.getElementById('shortAnswerProgress');
+            if (progressEl) {
+                progressEl.textContent = `Question ${currentShortAnswerIndex + 1} of ${shortAnswerQuestions.length}`;
+                progressEl.style.width = `${percent}%`;
+            }
+        }
+
+        // ==================== TRANSLATION & DEFINITIONS ====================
+        
+        function translatePage(language) {
+            if (language === '') {
+                // Remove translation
+                const translated = document.querySelectorAll('.translated');
+                translated.forEach(el => {
+                    if (el._originalText) {
+                        el.textContent = el._originalText;
+                    }
+                });
+                return;
+            }
+
+            // Use Google Translate
+            const googleTranslateUrl = `https://translate.google.com/translate?sl=en&tl=${language}&u=${encodeURIComponent(window.location.href)}`;
+            
+            alert(`This will open Google Translate in a new tab. You can also use your browser's built-in translation feature (usually right-click → Translate).`);
+            window.open(googleTranslateUrl, '_blank');
+            
+            // Reset selector
+            document.getElementById('languageSelect').value = '';
+        }
+
+        // Vocabulary terms for quick reference
+        const vocabDefinitions = {};
+        vocabulary.forEach(v => {
+            vocabDefinitions[v.term.toLowerCase()] = {
+                definition: v.definition,
+                example: v.example,
+                category: v.category
+            };
+        });
+
+        // Show definition tooltip
+        function showDefinition(term, event) {
+            const tooltip = document.getElementById('definitionTooltip');
+            const content = document.getElementById('tooltipContent');
+            
+            const vocab = vocabDefinitions[term.toLowerCase()];
+            if (!vocab) return;
+            
+            content.innerHTML = `
+                <h4>${term}</h4>
+                <p><strong>Definition:</strong> ${vocab.definition}</p>
+                <p><strong>Example:</strong> ${vocab.example}</p>
+                <p style="color: #666; font-size: 0.9em; margin-top: 8px;">${vocab.category}</p>
+            `;
+            
+            // Add close button with icon
+            tooltip.querySelector('.close-tooltip').innerHTML = '<i class="fas fa-times"></i>';
+            
+            // Position tooltip near click
+            tooltip.style.display = 'block';
+            tooltip.style.left = Math.min(event.clientX + 10, window.innerWidth - 320) + 'px';
+            tooltip.style.top = (event.clientY + 10) + 'px';
+        }
+
+        function closeTooltip() {
+            document.getElementById('definitionTooltip').style.display = 'none';
+        }
+
+        // Close tooltip when clicking outside
+        document.addEventListener('click', function(event) {
+            const tooltip = document.getElementById('definitionTooltip');
+            if (!event.target.classList.contains('vocab-term') && !tooltip.contains(event.target)) {
+                closeTooltip();
+            }
+        });
+
+        // Highlight vocabulary terms in text
+        function highlightVocabTerms(text) {
+            let highlighted = text;
+            
+            // Sort by length (longest first) to avoid partial matches
+            const terms = Object.keys(vocabDefinitions).sort((a, b) => b.length - a.length);
+            
+            terms.forEach(term => {
+                // Only highlight if it's a full word
+                const regex = new RegExp(`\\b${term}\\b`, 'gi');
+                highlighted = highlighted.replace(regex, function(match) {
+                    return `<span class="vocab-term" onclick="showDefinition('${term}', event)">${match}</span>`;
+                });
+            });
+            
+            return highlighted;
+        }
+
+        // ==================== INITIALIZATION ====================
+        
+        window.onload = function() {
+            // Small delay to ensure DOM is ready
+            setTimeout(() => {
+                updateHomeProgress();
+            }, 100);
+        };
+    </script>
+</body>
+</html>
