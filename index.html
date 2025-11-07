@@ -264,7 +264,8 @@
         }
 
         .stat-card .label {
-            opacity: 0.9;
+            color: #333;
+            font-weight: 600;
         }
 
         .weakness-list {
@@ -500,7 +501,7 @@
             transform: translate(-50%, -50%);
             font-size: 1.8em;
             font-weight: bold;
-            color: #667eea;
+            color: #4c3fb1;
         }
 
         .progress-badge {
@@ -791,7 +792,7 @@
         }
 
         .timeline-slot .empty-message {
-            color: #999;
+            color: #666;
             font-style: italic;
         }
 
@@ -1036,9 +1037,125 @@
             font-size: 1.5em;
         }
 
+        /* Note-Taking Reminder Modal */
+        .note-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .note-modal-overlay.active {
+            display: flex;
+        }
+
+        .note-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            animation: slideIn 0.3s ease;
+            text-align: center;
+        }
+
+        .note-modal-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .note-modal h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .note-modal p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .note-modal-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .note-modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
     </style>
 </head>
 <body>
+    <!-- Note-Taking Reminder Modal -->
+    <div id="noteModal" class="note-modal-overlay">
+        <div class="note-modal">
+            <div class="note-modal-icon" id="noteModalIcon">📝</div>
+            <h2 id="noteModalTitle">Update Your Notes!</h2>
+            <p id="noteModalMessage">Take a moment to write this down in your notebook. This will help you remember it better!</p>
+
+            <!-- Science explanation -->
+            <div style="margin: 20px 0; padding: 15px; background: #f0f9ff; border-radius: 10px; border-left: 4px solid #0284c7; text-align: left;">
+                <details style="cursor: pointer;">
+                    <summary style="font-weight: 600; color: #0369a1; font-size: 0.95em; user-select: none;">
+                        <i class="fas fa-brain"></i> Why write by hand? (The science behind it)
+                    </summary>
+                    <div style="margin-top: 12px; color: #555; font-size: 0.9em; line-height: 1.6;">
+                        <p style="margin-bottom: 10px;">
+                            <strong>Your brain works differently when you write by hand!</strong> Scientists used special sensors to see what happens in your brain, and here's what they found:
+                        </p>
+                        <ul style="margin-left: 20px; margin-bottom: 10px;">
+                            <li style="margin: 8px 0;"><strong>More brain connections:</strong> Writing by hand activates multiple parts of your brain at once—including areas for movement, vision, and memory. Typing only uses a tiny bit of your brain.</li>
+                            <li style="margin: 8px 0;"><strong>Better memory:</strong> When you form each letter, your brain creates a feedback loop that helps you remember the information longer.</li>
+                            <li style="margin: 8px 0;"><strong>Deeper understanding:</strong> Writing forces you to think about what's important and put it in your own words, instead of just copying everything down.</li>
+                        </ul>
+                        <p style="font-size: 0.85em; color: #666; margin-top: 10px;">
+                            <em>Source: Scientific American research on handwriting and learning</em>
+                        </p>
+                    </div>
+                </details>
+            </div>
+
+            <button class="note-modal-btn" onclick="closeNoteModal()">
+                <i class="fas fa-check"></i> I Will Update My Notes Before Moving On
+            </button>
+        </div>
+    </div>
+
     <!-- Study Timer (shows on all pages except home) -->
     <div id="studyTimer" class="study-timer" style="display: none;">
         <h4><i class="fas fa-clock"></i> Study Session</h4>
@@ -1362,16 +1479,16 @@
                 <div class="alert info">
                     <i class="fas fa-info-circle"></i>
                     <div>
-                        <strong>Timeline Challenge:</strong> Arrange the 9 key events leading to the Revolutionary War in chronological order! Understanding the sequence helps you see how tensions escalated over time.
+                        <strong>Timeline Challenge:</strong> Arrange the 10 key events leading to and including the Revolutionary War in chronological order! Understanding the sequence helps you see how tensions escalated over time.
                     </div>
                 </div>
 
                 <div class="timeline-mode-toggle">
-                    <button class="mode-btn" id="easyModeBtn" onclick="setTimelineMode('easy')">
-                        <i class="fas fa-lightbulb"></i> Show Years (Help Me!)
+                    <button class="mode-btn active" id="easyModeBtn" onclick="setTimelineMode('easy')">
+                        <i class="fas fa-lightbulb"></i> Show Years (default)
                     </button>
-                    <button class="mode-btn active" id="challengeModeBtn" onclick="setTimelineMode('challenge')">
-                        <i class="fas fa-medal"></i> Challenge Mode (default)
+                    <button class="mode-btn" id="challengeModeBtn" onclick="setTimelineMode('challenge')">
+                        <i class="fas fa-medal"></i> Challenge Mode
                     </button>
                 </div>
 
@@ -1383,7 +1500,7 @@
 
                 <div id="timelineStats" style="text-align: center; margin: 20px 0; display: none;">
                     <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; display: inline-block;">
-                        <strong>Best Score:</strong> <span id="timelineBestScore">0</span>/9 |
+                        <strong>Best Score:</strong> <span id="timelineBestScore">0</span>/10 |
                         <strong>Perfect Scores:</strong> <span id="timelinePerfectCount">0</span>/3 |
                         <strong>Attempts:</strong> <span id="timelineAttempts">0</span>
                     </div>
@@ -1480,6 +1597,12 @@
                 title: "Lexington & Concord",
                 year: "1775",
                 description: "First battles of the Revolutionary War - 'shot heard round the world'"
+            },
+            {
+                id: 10,
+                title: "Declaration of Independence",
+                year: "1776",
+                description: "Colonies declared independence from Britain"
             }
         ];
 
@@ -1987,6 +2110,7 @@
         let cardFlipped = false;
         let vocabProgress = JSON.parse(localStorage.getItem('vocabProgress')) || [];
         let practiceProgress = JSON.parse(localStorage.getItem('practiceProgress')) || {};
+        let wrongAnswerCount = JSON.parse(localStorage.getItem('wrongAnswerCount')) || {}; // Track wrong answers per question
         let testResults = JSON.parse(localStorage.getItem('testResults')) || [];
         let currentPracticeQuestions = [];
         let currentPracticeIndex = 0;
@@ -2008,9 +2132,10 @@
             perfectCount: 0,
             attempts: 0
         };
-        let timelineMode = 'challenge'; // Start in challenge mode
+        let timelineMode = 'easy'; // Start in easy mode (show years)
         let timelinePlaced = {}; // Maps slot index to event id
         let draggedEvent = null;
+        let hasCheckedInEasyMode = false; // Track if user has checked answer in easy mode
 
         const badges = [
             { id: 'first_study', name: 'First Steps', icon: '👶', description: 'Complete your first study session', check: () => totalStudyTime > 0 },
@@ -2024,6 +2149,21 @@
             { id: 'study_hour', name: 'Time Traveler', icon: '⏰', description: 'Study for at least 1 hour total', check: () => totalStudyTime >= 3600000 },
             { id: 'timeline_master', name: 'Timeline Master', icon: '🕰️', description: 'Get perfect timeline score 3 times', check: () => timelineProgress.perfectCount >= 3 }
         ];
+
+        // ==================== NOTE-TAKING REMINDER MODAL ====================
+
+        function showNoteModal(title, message, icon = '📝') {
+            const modal = document.getElementById('noteModal');
+            document.getElementById('noteModalTitle').textContent = title;
+            document.getElementById('noteModalMessage').textContent = message;
+            document.getElementById('noteModalIcon').textContent = icon;
+            modal.classList.add('active');
+        }
+
+        function closeNoteModal() {
+            const modal = document.getElementById('noteModal');
+            modal.classList.remove('active');
+        }
 
         // ==================== STUDY TIMER ====================
 
@@ -2309,15 +2449,26 @@
                 </div>
             `;
 
-            // Add "Email My Teacher" button if proficient or expert
-            if (overallProgress >= 70) {
+            // Add "Email My Teacher" button if proficient or expert AND studied for at least 1 hour
+            const hasStudiedEnough = totalStudyTime >= 3600000; // 1 hour in milliseconds
+            if (overallProgress >= 70 && hasStudiedEnough) {
                 progressHTML += `
                     <div style="text-align: center; margin: 20px 0;">
                         <button class="btn btn-primary" onclick="showEmailTeacherForm()" style="font-size: 1.1em; padding: 15px 30px;">
                             <i class="fas fa-envelope"></i> Email My Teacher
                         </button>
                         <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
-                            You've reached ${overallProgress.toFixed(0)}% proficiency! Share your progress with your teacher.
+                            You've reached ${overallProgress.toFixed(0)}% proficiency and studied for over 1 hour! Share your progress with your teacher.
+                        </p>
+                    </div>
+                `;
+            } else if (overallProgress >= 70 && !hasStudiedEnough) {
+                const minutesRemaining = Math.ceil((3600000 - totalStudyTime) / 60000);
+                progressHTML += `
+                    <div style="text-align: center; margin: 20px 0; padding: 20px; background: #f0f4ff; border-radius: 10px;">
+                        <p style="color: #666; font-size: 0.95em;">
+                            <i class="fas fa-lock"></i> You're at ${overallProgress.toFixed(0)}% proficiency!
+                            Study for ${minutesRemaining} more minutes to unlock the "Email My Teacher" feature.
                         </p>
                     </div>
                 `;
@@ -2601,6 +2752,22 @@
             // Update progress
             practiceProgress[questionId] = isCorrect;
             localStorage.setItem('practiceProgress', JSON.stringify(practiceProgress));
+
+            // Track wrong answers
+            if (!isCorrect) {
+                wrongAnswerCount[questionId] = (wrongAnswerCount[questionId] || 0) + 1;
+                localStorage.setItem('wrongAnswerCount', JSON.stringify(wrongAnswerCount));
+
+                // Show note reminder if wrong 2+ times
+                if (wrongAnswerCount[questionId] >= 2) {
+                    showNoteModal(
+                        'Update Your Notes! 📚',
+                        `You've gotten this question wrong ${wrongAnswerCount[questionId]} times. Write down the correct answer and explanation in your notebook: "${question.explanation}"`,
+                        '📚'
+                    );
+                }
+            }
+
             checkBadges();
             
             // Show visual feedback on options
@@ -2764,6 +2931,15 @@
             });
             localStorage.setItem('testResults', JSON.stringify(testResults));
             checkBadges();
+
+            // Show note reminder if score is below 70%
+            if (score < 70) {
+                showNoteModal(
+                    'Time to Review! 📖',
+                    `You scored ${score}%. Review the questions you missed below and write the correct answers and explanations in your notebook. This will help you do better next time!`,
+                    '📖'
+                );
+            }
 
             // Display results
             let resultsHTML = `
@@ -3257,6 +3433,7 @@
                         </div>
                     </div>
 
+                    <!-- Temporarily hidden - will be re-enabled later when links are finalized
                     <div style="background: #e0f2fe; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #0284c7;">
                         <strong><i class="fas fa-book-open"></i> Need more information?</strong>
                         <p style="margin: 10px 0 5px 0; font-size: 0.9em;">Review these resources if you're stuck:</p>
@@ -3264,11 +3441,14 @@
                             ${getHelpLinks(question.topic)}
                         </div>
                     </div>
+                    -->
 
                     <div style="margin: 20px 0;">
-                        <label style="display: block; margin-bottom: 10px; font-weight: 600;">Write your answer (4-5 sentences):</label>
+                        <label for="shortAnswerText" style="display: block; margin-bottom: 10px; font-weight: 600;">Write your answer (4-5 sentences):</label>
                         <textarea
                             id="shortAnswerText"
+                            name="shortAnswerText"
+                            aria-label="Write your short answer here"
                             style="width: 100%; min-height: 200px; padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em; font-family: inherit; line-height: 1.6;"
                             placeholder="Start typing your answer here... Try writing on your own first before revealing sentence starters!"
                         >${savedResponse}</textarea>
@@ -3406,8 +3586,22 @@
                     </div>
                 `;
                 warningDiv.style.display = 'block';
+
+                // Show modal reminder to update notes
+                showNoteModal(
+                    'Write the Answer Down! ✍️',
+                    'Now that you\'ve seen the example answer, write it in your notebook along with the key points from the rubric. This will help you remember how to answer similar questions!',
+                    '✍️'
+                );
             } else {
                 warningDiv.style.display = 'none';
+
+                // They attempted an answer, encourage them to note what they missed
+                showNoteModal(
+                    'Update Your Notes! 📝',
+                    'Compare your answer to the example. Write down any important points you missed in your notebook, especially the items from the rubric checklist!',
+                    '📝'
+                );
             }
 
             // Make textarea read-only to prevent copying the answer
@@ -3776,7 +3970,7 @@
 
             // Render timeline slots
             let slotsHTML = '';
-            for (let i = 1; i <= 9; i++) {
+            for (let i = 1; i <= 10; i++) {
                 const eventId = timelinePlaced[i];
                 const event = timelineEvents.find(e => e.id === eventId);
 
@@ -3868,6 +4062,12 @@
             timelineMode = mode;
             document.getElementById('easyModeBtn').classList.toggle('active', mode === 'easy');
             document.getElementById('challengeModeBtn').classList.toggle('active', mode === 'challenge');
+
+            // Re-enable check button when switching to challenge mode
+            if (mode === 'challenge') {
+                document.getElementById('checkTimelineBtn').disabled = false;
+            }
+
             renderTimeline();
         }
 
@@ -3875,7 +4075,7 @@
             let correct = 0;
             const results = [];
 
-            for (let i = 1; i <= 9; i++) {
+            for (let i = 1; i <= 10; i++) {
                 const placedEventId = timelinePlaced[i];
                 const correctEventId = i;
                 const isCorrect = placedEventId === correctEventId;
@@ -3895,7 +4095,7 @@
             if (correct > timelineProgress.bestScore) {
                 timelineProgress.bestScore = correct;
             }
-            if (correct === 9) {
+            if (correct === 10) {
                 timelineProgress.perfectCount++;
                 showConfetti();
             }
@@ -3918,17 +4118,17 @@
 
             // Show results
             let resultsHTML = `
-                <div class="alert ${correct === 9 ? 'success' : 'info'}" style="margin-top: 30px;">
-                    <i class="fas ${correct === 9 ? 'fa-trophy' : 'fa-chart-line'}"></i>
+                <div class="alert ${correct === 10 ? 'success' : 'info'}" style="margin-top: 30px;">
+                    <i class="fas ${correct === 10 ? 'fa-trophy' : 'fa-chart-line'}"></i>
                     <div>
-                        <h3 style="margin-bottom: 10px;">Score: ${correct} out of 9 correct!</h3>
-                        ${correct === 9 ? '<p><strong>Perfect! You mastered the timeline!</strong></p>' : ''}
-                        ${correct < 9 ? '<p>Look at the events in red - those are in the wrong position. Try again!</p>' : ''}
+                        <h3 style="margin-bottom: 10px;">Score: ${correct} out of 10 correct!</h3>
+                        ${correct === 10 ? '<p><strong>Perfect! You mastered the timeline!</strong></p>' : ''}
+                        ${correct < 10 ? '<p>Look at the events in red - those are in the wrong position. Try again!</p>' : ''}
                     </div>
                 </div>
             `;
 
-            if (correct < 9) {
+            if (correct < 10) {
                 resultsHTML += '<div style="margin-top: 20px; padding: 20px; background: #fff3cd; border-radius: 10px;">';
                 resultsHTML += '<h4 style="color: #856404; margin-bottom: 15px;"><i class="fas fa-lightbulb"></i> Corrections:</h4>';
                 results.forEach(result => {
@@ -3942,15 +4142,33 @@
             }
 
             document.getElementById('timelineResults').innerHTML = resultsHTML;
+
+            // If in easy mode and first time checking, show reminder and disable button
+            if (timelineMode === 'easy' && !hasCheckedInEasyMode) {
+                hasCheckedInEasyMode = true;
+
+                // Show modal reminder
+                showNoteModal(
+                    'Write It Down! 📝',
+                    'Now that you\'ve seen the correct timeline with the dates, write it in your notebook to help you memorize it. Then switch to Challenge Mode to test yourself without the dates!',
+                    '📝'
+                );
+
+                // Disable check button in easy mode
+                document.getElementById('checkTimelineBtn').disabled = true;
+            }
         }
 
         function showTimelineAnswer() {
             // Automatically place all events in correct order
             timelinePlaced = {};
-            for (let i = 1; i <= 9; i++) {
+            for (let i = 1; i <= 10; i++) {
                 timelinePlaced[i] = i;
             }
             renderTimeline();
+
+            // Disable check answer button to prevent cheating
+            document.getElementById('checkTimelineBtn').disabled = true;
 
             document.getElementById('timelineResults').innerHTML = `
                 <div class="alert info" style="margin-top: 30px;">
@@ -3966,6 +4184,10 @@
             timelinePlaced = {};
             renderTimeline();
             document.getElementById('timelineResults').innerHTML = '';
+
+            // Re-enable check answer button and reset easy mode flag
+            document.getElementById('checkTimelineBtn').disabled = false;
+            hasCheckedInEasyMode = false;
 
             // Remove feedback classes
             document.querySelectorAll('.timeline-event').forEach(el => {
@@ -4187,13 +4409,13 @@
 
                         <form id="teacherEmailForm" onsubmit="sendEmailToTeacher(event)">
                             <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Your Name:</label>
-                                <input type="text" id="studentName" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em;">
+                                <label for="studentName" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Your Name:</label>
+                                <input type="text" id="studentName" name="studentName" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em;">
                             </div>
 
                             <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Feedback (Optional):</label>
-                                <textarea id="studentFeedback" rows="5" placeholder="How helpful was this study tool? What could be improved?" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; resize: vertical;"></textarea>
+                                <label for="studentFeedback" style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Feedback (Optional):</label>
+                                <textarea id="studentFeedback" name="studentFeedback" rows="5" placeholder="How helpful was this study tool? What could be improved?" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; resize: vertical;"></textarea>
                             </div>
 
                             <div style="text-align: center; margin-top: 20px;">
