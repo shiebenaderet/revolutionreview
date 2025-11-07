@@ -1101,6 +1101,10 @@
                         <i class="fas fa-brain"></i> Focused Study Mode<br>
                         <small>AI-powered practice for weak areas</small>
                     </button>
+                    <button class="nav-btn" onclick="showSection('saveload')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-save"></i> Save & Load Progress<br>
+                        <small>Backup your work or transfer to another device</small>
+                    </button>
                 </div>
 
                 <div class="alert info">
@@ -1297,6 +1301,56 @@
                 </div>
 
                 <div id="focusedContent"></div>
+            </div>
+
+            <!-- SAVE & LOAD SECTION -->
+            <div id="saveload" class="section">
+                <button class="btn btn-secondary" onclick="showSection('home')">← Back to Home</button>
+
+                <h2 style="margin: 20px 0;"><i class="fas fa-save"></i> Save & Load Progress</h2>
+
+                <div class="alert info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Why save your progress?</strong> Save your work to a file so you can:
+                        <ul style="margin: 10px 0 0 20px;">
+                            <li>Keep your progress safe if you clear your browser</li>
+                            <li>Continue studying on a different computer or device</li>
+                            <li>Share your progress with your teacher</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 30px 0;">
+                    <div style="padding: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white; text-align: center;">
+                        <i class="fas fa-download" style="font-size: 3em; margin-bottom: 15px;"></i>
+                        <h3 style="margin-bottom: 15px;">Save My Progress</h3>
+                        <p style="margin-bottom: 20px; opacity: 0.9;">Download a file with all your progress - vocabulary, practice scores, test results, and badges.</p>
+                        <button class="btn btn-primary" onclick="exportProgress()" style="background: white; color: #667eea; font-size: 1.1em; padding: 12px 30px;">
+                            <i class="fas fa-download"></i> Save Now
+                        </button>
+                    </div>
+
+                    <div style="padding: 30px; background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); border-radius: 15px; color: white; text-align: center;">
+                        <i class="fas fa-upload" style="font-size: 3em; margin-bottom: 15px;"></i>
+                        <h3 style="margin-bottom: 15px;">Load Saved Progress</h3>
+                        <p style="margin-bottom: 20px; opacity: 0.9;">Upload a previously saved file to restore your progress from another session or device.</p>
+                        <button class="btn btn-secondary" onclick="document.getElementById('importFileMain').click()" style="background: white; color: #764ba2; font-size: 1.1em; padding: 12px 30px;">
+                            <i class="fas fa-upload"></i> Load File
+                        </button>
+                        <input type="file" id="importFileMain" accept=".json" style="display: none;" onchange="importProgress(event)">
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 10px; border-left: 4px solid #ffc107;">
+                    <h4 style="color: #856404; margin-bottom: 10px;"><i class="fas fa-exclamation-triangle"></i> Important Tips:</h4>
+                    <ul style="margin: 10px 0 0 20px; color: #856404;">
+                        <li>Save your progress regularly, especially before closing your browser</li>
+                        <li>Keep the downloaded file in a safe place (like Google Drive or USB drive)</li>
+                        <li>Loading a file will replace your current progress</li>
+                        <li>The file is small and safe to email or share</li>
+                    </ul>
+                </div>
             </div>
 
             <!-- TIMELINE CHALLENGE SECTION -->
