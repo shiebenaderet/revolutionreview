@@ -767,6 +767,17 @@
             100% { transform: translateY(-200px) rotate(360deg); opacity: 0; }
         }
 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .confetti {
             position: fixed;
             width: 10px;
@@ -1241,11 +1252,11 @@
                 </div>
 
                 <div class="timeline-mode-toggle">
-                    <button class="mode-btn active" id="easyModeBtn" onclick="setTimelineMode('easy')">
-                        <i class="fas fa-graduation-cap"></i> Easy Mode (with years)
+                    <button class="mode-btn" id="easyModeBtn" onclick="setTimelineMode('easy')">
+                        <i class="fas fa-lightbulb"></i> Show Years (Help Me!)
                     </button>
-                    <button class="mode-btn" id="challengeModeBtn" onclick="setTimelineMode('challenge')">
-                        <i class="fas fa-medal"></i> Challenge Mode (no years)
+                    <button class="mode-btn active" id="challengeModeBtn" onclick="setTimelineMode('challenge')">
+                        <i class="fas fa-medal"></i> Challenge Mode (default)
                     </button>
                 </div>
 
@@ -1882,7 +1893,7 @@
             perfectCount: 0,
             attempts: 0
         };
-        let timelineMode = 'easy';
+        let timelineMode = 'challenge'; // Start in challenge mode
         let timelinePlaced = {}; // Maps slot index to event id
         let draggedEvent = null;
 
@@ -3090,6 +3101,7 @@
 
         function loadShortAnswers() {
             currentShortAnswerIndex = 0;
+            revealedStartersCount = 0;
             loadShortAnswerQuestion();
         }
 
@@ -3109,26 +3121,41 @@
 
             const question = shortAnswerQuestions[currentShortAnswerIndex];
             const savedResponse = shortAnswerResponses[currentShortAnswerIndex] || '';
-            
+
             let questionHTML = `
                 <div class="question-card">
                     <h3>Question ${currentShortAnswerIndex + 1} of ${shortAnswerQuestions.length}</h3>
                     <p style="margin: 15px 0; font-size: 1.1em; line-height: 1.6;"><strong>${question.question}</strong></p>
                     <p style="color: #666; margin-bottom: 15px;"><strong>Topic:</strong> ${question.topic}</p>
-                    
-                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 15px 0;">
-                        <strong>Sentence Starters (use these if you need help):</strong>
-                        <ul style="margin: 10px 0 0 20px;">
-                            ${question.sentenceStarters.map(starter => `<li>${starter}</li>`).join('')}
-                        </ul>
+
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #ffc107;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong><i class="fas fa-hands-helping"></i> Need help getting started?</strong>
+                            <button class="btn btn-secondary" onclick="revealNextStarter()" id="starterBtn" style="padding: 5px 15px;">
+                                <i class="fas fa-lightbulb"></i> Show Sentence Starter
+                            </button>
+                        </div>
+                        <div id="sentenceStarters" style="margin-top: 10px; display: none;">
+                            <ul style="margin: 10px 0 0 20px;" id="startersList">
+                                <!-- Starters will be revealed one at a time -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="background: #e0f2fe; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #0284c7;">
+                        <strong><i class="fas fa-book-open"></i> Need more information?</strong>
+                        <p style="margin: 10px 0 5px 0; font-size: 0.9em;">Review these resources if you're stuck:</p>
+                        <div style="margin-top: 10px;">
+                            ${getHelpLinks(question.topic)}
+                        </div>
                     </div>
 
                     <div style="margin: 20px 0;">
                         <label style="display: block; margin-bottom: 10px; font-weight: 600;">Write your answer (4-5 sentences):</label>
-                        <textarea 
-                            id="shortAnswerText" 
+                        <textarea
+                            id="shortAnswerText"
                             style="width: 100%; min-height: 200px; padding: 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em; font-family: inherit; line-height: 1.6;"
-                            placeholder="Start typing your answer here..."
+                            placeholder="Start typing your answer here... Try writing on your own first before revealing sentence starters!"
                         >${savedResponse}</textarea>
                     </div>
 
@@ -3162,6 +3189,82 @@
             updateShortAnswerProgress();
         }
 
+        let revealedStartersCount = 0;
+
+        function revealNextStarter() {
+            const question = shortAnswerQuestions[currentShortAnswerIndex];
+            const startersDiv = document.getElementById('sentenceStarters');
+            const startersList = document.getElementById('startersList');
+            const starterBtn = document.getElementById('starterBtn');
+
+            startersDiv.style.display = 'block';
+
+            if (revealedStartersCount < question.sentenceStarters.length) {
+                const starter = question.sentenceStarters[revealedStartersCount];
+                const li = document.createElement('li');
+                li.textContent = starter;
+                li.style.marginBottom = '8px';
+                li.style.animation = 'fadeIn 0.5s';
+                startersList.appendChild(li);
+
+                revealedStartersCount++;
+
+                if (revealedStartersCount >= question.sentenceStarters.length) {
+                    starterBtn.innerHTML = '<i class="fas fa-check"></i> All Starters Shown';
+                    starterBtn.disabled = true;
+                    starterBtn.style.opacity = '0.6';
+                } else {
+                    starterBtn.innerHTML = `<i class="fas fa-lightbulb"></i> Show Next Starter (${revealedStartersCount}/${question.sentenceStarters.length})`;
+                }
+            }
+        }
+
+        function getHelpLinks(topic) {
+            // Map topics to appropriate help resources
+            const links = {
+                "Causes of Unrest": [
+                    { title: "American Revolution - Britannica Kids", url: "https://kids.britannica.com/kids/article/American-Revolution/352838" },
+                    { title: "Causes of the Revolutionary War - Kiddle", url: "https://kids.kiddle.co/American_Revolutionary_War" }
+                ],
+                "Causes of Unrest - Escalation": [
+                    { title: "Road to Revolution Timeline - Britannica", url: "https://kids.britannica.com/kids/article/American-Revolution/352838" },
+                    { title: "Revolutionary War Events - Kiddle", url: "https://kids.kiddle.co/American_Revolutionary_War" }
+                ],
+                "1776 Musical": [
+                    { title: "Declaration of Independence - Britannica Kids", url: "https://kids.britannica.com/kids/article/Declaration-of-Independence/353133" },
+                    { title: "Thomas Jefferson - Kiddle", url: "https://kids.kiddle.co/Thomas_Jefferson" }
+                ],
+                "Uncovering Loyalties": [
+                    { title: "Different Perspectives in Revolution - Britannica", url: "https://kids.britannica.com/kids/article/American-Revolution/352838" },
+                    { title: "Loyalists - Kiddle", url: "https://kids.kiddle.co/Loyalist_(American_Revolution)" }
+                ],
+                "Declaration of Independence": [
+                    { title: "Declaration of Independence - Britannica Kids", url: "https://kids.britannica.com/kids/article/Declaration-of-Independence/353133" },
+                    { title: "Declaration Text & History - Kiddle", url: "https://kids.kiddle.co/United_States_Declaration_of_Independence" }
+                ]
+            };
+
+            const topicLinks = links[topic] || links["Causes of Unrest"];
+
+            return topicLinks.map(link => `
+                <a href="${link.url}" target="_blank" style="
+                    display: inline-block;
+                    margin: 5px 10px 5px 0;
+                    padding: 8px 15px;
+                    background: white;
+                    color: #0284c7;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    border: 2px solid #0284c7;
+                    font-size: 0.9em;
+                    transition: all 0.3s;
+                " onmouseover="this.style.background='#0284c7'; this.style.color='white';"
+                   onmouseout="this.style.background='white'; this.style.color='#0284c7';">
+                    <i class="fas fa-external-link-alt"></i> ${link.title}
+                </a>
+            `).join('');
+        }
+
         function revealExemplar() {
             // Save current response
             const response = document.getElementById('shortAnswerText').value;
@@ -3170,7 +3273,7 @@
 
             // Show exemplar and rubric
             document.getElementById('exemplar-section').style.display = 'block';
-            
+
             // Scroll to exemplar
             document.getElementById('exemplar-section').scrollIntoView({ behavior: 'smooth' });
         }
@@ -3189,6 +3292,9 @@
             const response = document.getElementById('shortAnswerText').value;
             shortAnswerResponses[currentShortAnswerIndex] = response;
             localStorage.setItem('shortAnswerResponses', JSON.stringify(shortAnswerResponses));
+
+            // Reset starter count for next question
+            revealedStartersCount = 0;
 
             // Move to next question
             currentShortAnswerIndex++;
