@@ -98,7 +98,7 @@
             background: #e0e0e0;
             height: 30px;
             border-radius: 15px;
-            overflow: hidden;
+            overflow: visible;
             margin: 20px 0;
             position: relative;
         }
@@ -107,11 +107,20 @@
             background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
             height: 100%;
             transition: width 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
+            border-radius: 15px;
+            position: relative;
+        }
+
+        .progress-bar .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #333;
             font-weight: bold;
+            white-space: nowrap;
+            text-shadow: 0 0 3px white;
+            z-index: 1;
         }
 
         .flashcard {
@@ -357,6 +366,293 @@
             color: #991b1b;
         }
 
+        .keyboard-hint {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+        }
+
+        .keyboard-hint .key {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-family: monospace;
+            font-weight: bold;
+            color: #667eea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .study-timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 15px 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 200px;
+        }
+
+        .study-timer h4 {
+            color: #667eea;
+            margin: 0 0 8px 0;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .study-timer .time-display {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+            font-family: monospace;
+            text-align: center;
+        }
+
+        .study-timer .total-time {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 8px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 8px;
+        }
+
+        .study-timer .timer-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .study-timer .timer-btn {
+            flex: 1;
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.2s;
+        }
+
+        .study-timer .timer-btn.pause {
+            background: #ffc107;
+            color: white;
+        }
+
+        .study-timer .timer-btn.resume {
+            background: #10b981;
+            color: white;
+        }
+
+        .study-timer .timer-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .circular-progress {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            position: relative;
+        }
+
+        .circular-progress svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .circular-progress circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .circular-progress .bg-circle {
+            stroke: #e0e0e0;
+        }
+
+        .circular-progress .progress-circle {
+            stroke: url(#gradient);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .circular-progress .percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .progress-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin: 5px;
+        }
+
+        .progress-badge.beginner {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .progress-badge.learning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .progress-badge.proficient {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .progress-badge.expert {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-display {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .achievement-badge {
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            min-width: 150px;
+            transition: all 0.3s;
+        }
+
+        .achievement-badge.earned {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            animation: badge-glow 2s infinite;
+        }
+
+        .achievement-badge.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        @keyframes badge-glow {
+            0%, 100% {
+                box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+            }
+            50% {
+                box-shadow: 0 5px 30px rgba(102, 126, 234, 0.6);
+            }
+        }
+
+        .badge-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .badge-name {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .badge-desc {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .streak-display {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .streak-display .streak-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .streak-display .streak-emoji {
+            font-size: 2em;
+        }
+
+        .mini-progress {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .mini-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+
+            .study-timer, .nav-btn, .btn, .keyboard-hint,
+            .card-controls, .reset-btn, .timer-controls {
+                display: none !important;
+            }
+
+            header {
+                background: none;
+                color: black;
+                border-bottom: 3px solid #667eea;
+                page-break-after: avoid;
+            }
+
+            .vocab-print-item {
+                page-break-inside: avoid;
+                margin-bottom: 20px;
+                padding: 15px;
+                border: 2px solid #e0e0e0;
+                border-radius: 10px;
+            }
+
+            .vocab-print-item h3 {
+                color: #667eea;
+                margin-bottom: 10px;
+            }
+        }
+
         @media (max-width: 600px) {
             .content {
                 padding: 15px;
@@ -373,6 +669,23 @@
             .flashcard {
                 padding: 30px 20px;
                 min-height: 250px;
+            }
+
+            .keyboard-hint {
+                font-size: 0.8em;
+                padding: 8px 12px;
+                gap: 8px;
+            }
+
+            .study-timer {
+                top: 10px;
+                right: 10px;
+                padding: 10px 15px;
+                min-width: 160px;
+            }
+
+            .study-timer .time-display {
+                font-size: 1.4em;
             }
         }
 
@@ -412,26 +725,6 @@
             background: #fecaca;
         }
 
-        .language-selector {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 15px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .language-selector select {
-            background: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
 
         .vocab-term {
             color: #667eea;
@@ -487,35 +780,21 @@
             font-size: 1.5em;
         }
 
-        @media (max-width: 600px) {
-            .language-selector {
-                position: relative;
-                top: 0;
-                right: 0;
-                margin-bottom: 15px;
-                justify-content: center;
-            }
-        }
     </style>
 </head>
 <body>
+    <!-- Study Timer (shows on all pages except home) -->
+    <div id="studyTimer" class="study-timer" style="display: none;">
+        <h4><i class="fas fa-clock"></i> Study Session</h4>
+        <div class="time-display" id="timerDisplay">00:00</div>
+        <div class="total-time" id="totalTime">Total: 0h 0m</div>
+        <div class="timer-controls">
+            <button class="timer-btn pause" id="pauseBtn" onclick="toggleTimer()"><i class="fas fa-pause"></i> Pause</button>
+        </div>
+    </div>
+
     <div class="container">
         <header>
-            <div class="language-selector">
-                <i class="fas fa-globe"></i>
-                <select id="languageSelect" onchange="translatePage(this.value)">
-                    <option value="">English</option>
-                    <option value="pt">Portuguese (Português)</option>
-                    <option value="uk">Ukrainian (Українська)</option>
-                    <option value="es">Spanish (Español)</option>
-                    <option value="zh-CN">Chinese (中文)</option>
-                    <option value="vi">Vietnamese (Tiếng Việt)</option>
-                    <option value="ko">Korean (한국어)</option>
-                    <option value="ar">Arabic (العربية)</option>
-                    <option value="ru">Russian (Русский)</option>
-                    <option value="fr">French (Français)</option>
-                </select>
-            </div>
             <h1><i class="fas fa-flag-usa"></i> Revolutionary War Study Tool</h1>
             <p>Get ready to ace your test! Learn vocabulary, practice questions, and track your progress.</p>
         </header>
@@ -554,6 +833,14 @@
                         <i class="fas fa-chart-line"></i> Check My Progress<br>
                         <small>What do I know? What do I need to work on?</small>
                     </button>
+                    <button class="nav-btn" onclick="showSection('printguide')" style="background: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 100%);">
+                        <i class="fas fa-print"></i> Print Study Guide<br>
+                        <small>Get a printable reference sheet</small>
+                    </button>
+                    <button class="nav-btn" onclick="showSection('focused')" style="background: linear-gradient(135deg, #FA709A 0%, #FEE140 100%);">
+                        <i class="fas fa-brain"></i> Focused Study Mode<br>
+                        <small>AI-powered practice for weak areas</small>
+                    </button>
                 </div>
 
                 <div class="alert info">
@@ -571,7 +858,8 @@
                 <h2 style="margin: 20px 0;">Vocabulary Flashcards</h2>
                 
                 <div class="progress-bar">
-                    <div class="progress-fill" id="vocabProgress">0%</div>
+                    <div class="progress-fill" id="vocabProgressBar" style="width: 0%"></div>
+                    <div class="progress-text" id="vocabProgress">0/22 terms mastered (0%)</div>
                 </div>
 
                 <div id="flashcardContainer"></div>
@@ -583,6 +871,13 @@
                 </div>
 
                 <p class="flip-indicator">Click the card to flip between term and definition</p>
+
+                <div class="keyboard-hint">
+                    <span><span class="key">←</span> <span class="key">→</span> Navigate cards</span>
+                    <span><span class="key">Space</span> Flip card</span>
+                    <span><span class="key">K</span> Mark known</span>
+                    <span><span class="key">Esc</span> Home</span>
+                </div>
 
                 <div style="text-align: center; margin-top: 20px;">
                     <button class="btn btn-secondary" onclick="shuffleCards()"><i class="fas fa-random"></i> Shuffle Cards</button>
@@ -603,8 +898,14 @@
                     </div>
                 </div>
 
+                <div class="keyboard-hint">
+                    <span><span class="key">1</span> <span class="key">2</span> <span class="key">3</span> <span class="key">4</span> Select answer</span>
+                    <span><span class="key">Esc</span> Home</span>
+                </div>
+
                 <div class="progress-bar">
-                    <div class="progress-fill" id="practiceProgress">Question 0 of 0</div>
+                    <div class="progress-fill" id="practiceProgressBar" style="width: 0%"></div>
+                    <div class="progress-text" id="practiceProgress">Question 0 of 0</div>
                 </div>
 
                 <div id="practiceContainer"></div>
@@ -628,7 +929,8 @@
                 </div>
 
                 <div class="progress-bar">
-                    <div class="progress-fill" id="shortAnswerProgress">Question 0 of 5</div>
+                    <div class="progress-fill" id="shortAnswerProgressBar" style="width: 0%"></div>
+                    <div class="progress-text" id="shortAnswerProgress">Question 0 of 5</div>
                 </div>
 
                 <div id="shortAnswerContainer"></div>
@@ -651,6 +953,11 @@
                     </div>
                 </div>
 
+                <div class="keyboard-hint">
+                    <span><span class="key">1</span> <span class="key">2</span> <span class="key">3</span> <span class="key">4</span> Select answer for question in view</span>
+                    <span><span class="key">Esc</span> Home</span>
+                </div>
+
                 <div id="testContainer"></div>
             </div>
 
@@ -665,7 +972,71 @@
                 <div id="weaknessContainer"></div>
                 <div id="strengthContainer"></div>
 
+                <div style="margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <h3 style="margin-bottom: 15px;"><i class="fas fa-download"></i> Backup Your Progress</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Export your progress to save it or transfer to another device:</p>
+                    <button class="btn btn-primary" onclick="exportProgress()"><i class="fas fa-file-export"></i> Export Progress</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()"><i class="fas fa-file-import"></i> Import Progress</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importProgress(event)">
+                </div>
+
                 <button class="reset-btn" onclick="resetAllProgress()">Reset All Progress</button>
+            </div>
+
+            <!-- PRINT STUDY GUIDE SECTION -->
+            <div id="printguide" class="section">
+                <button class="btn btn-secondary" onclick="showSection('home')">← Back to Home</button>
+
+                <h2 style="margin: 20px 0;">Print Study Guide</h2>
+
+                <div class="alert info">
+                    <i class="fas fa-print"></i>
+                    <div>
+                        <strong>Print This Guide:</strong> Click the "Print Study Guide" button below to generate a printer-friendly version. You can also filter by category to print only what you need!
+                    </div>
+                </div>
+
+                <div style="margin: 20px 0;">
+                    <label style="font-weight: 600; margin-right: 10px;">Filter by category:</label>
+                    <select id="printCategory" onchange="updatePrintGuide()" style="padding: 8px 15px; border-radius: 8px; border: 2px solid #e0e0e0; font-size: 1em;">
+                        <option value="all">All Categories</option>
+                        <option value="Causes of Unrest">Causes of Unrest</option>
+                        <option value="Uncovering Loyalties">Uncovering Loyalties</option>
+                        <option value="Declaration">Declaration</option>
+                    </select>
+                </div>
+
+                <div style="text-align: center; margin: 20px 0;">
+                    <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> Print Study Guide</button>
+                    <button class="btn btn-secondary" onclick="markAllForPrint()"><i class="fas fa-check-square"></i> Select All for Study</button>
+                    <button class="btn btn-secondary" onclick="markUnknownForPrint()"><i class="fas fa-exclamation-triangle"></i> Select Unknown Terms</button>
+                </div>
+
+                <div id="printGuideContent" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- FOCUSED STUDY MODE SECTION -->
+            <div id="focused" class="section">
+                <button class="btn btn-secondary" onclick="showSection('home')">← Back to Home</button>
+
+                <h2 style="margin: 20px 0;">Focused Study Mode</h2>
+
+                <div class="alert info">
+                    <i class="fas fa-brain"></i>
+                    <div>
+                        <strong>Smart Practice:</strong> This mode analyzes your performance and creates a personalized study session focusing on your weak areas. It includes vocabulary you haven't mastered and topics where you've struggled.
+                    </div>
+                </div>
+
+                <div id="focusedAnalysis"></div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <button class="btn btn-primary" onclick="startFocusedSession()" style="font-size: 1.2em; padding: 15px 40px;">
+                        <i class="fas fa-play"></i> Start Focused Session
+                    </button>
+                </div>
+
+                <div id="focusedContent"></div>
             </div>
         </div>
     </div>
@@ -1172,7 +1543,7 @@
         ];
 
         // ==================== STATE MANAGEMENT ====================
-        
+
         let currentCardIndex = 0;
         let cardFlipped = false;
         let vocabProgress = JSON.parse(localStorage.getItem('vocabProgress')) || [];
@@ -1181,67 +1552,355 @@
         let currentPracticeQuestions = [];
         let currentPracticeIndex = 0;
 
+        // Study Timer
+        let timerInterval = null;
+        let sessionStartTime = null;
+        let sessionElapsedTime = 0;
+        let timerPaused = false;
+        let totalStudyTime = parseInt(localStorage.getItem('totalStudyTime')) || 0;
+
+        // Streak & Badges
+        let studyStreak = JSON.parse(localStorage.getItem('studyStreak')) || { current: 0, longest: 0, lastStudyDate: null };
+        let earnedBadges = JSON.parse(localStorage.getItem('earnedBadges')) || [];
+
+        const badges = [
+            { id: 'first_study', name: 'First Steps', icon: '👶', description: 'Complete your first study session', check: () => totalStudyTime > 0 },
+            { id: 'vocab_5', name: 'Word Explorer', icon: '📚', description: 'Master 5 vocabulary terms', check: () => vocabProgress.length >= 5 },
+            { id: 'vocab_all', name: 'Vocabulary Master', icon: '🎓', description: 'Master all vocabulary terms', check: () => vocabProgress.length >= vocabulary.length },
+            { id: 'streak_3', name: 'Dedicated Student', icon: '🔥', description: 'Study 3 days in a row', check: () => studyStreak.current >= 3 },
+            { id: 'streak_7', name: 'Week Warrior', icon: '⭐', description: 'Study 7 days in a row', check: () => studyStreak.current >= 7 },
+            { id: 'practice_10', name: 'Practice Pro', icon: '💪', description: 'Complete 10 practice questions', check: () => Object.keys(practiceProgress).length >= 10 },
+            { id: 'test_pass', name: 'Test Taker', icon: '✅', description: 'Score 80% or higher on a practice test', check: () => testResults.some(t => t.score >= 80) },
+            { id: 'perfect_test', name: 'Perfect Score', icon: '💯', description: 'Get 100% on a practice test', check: () => testResults.some(t => t.score >= 100) },
+            { id: 'study_hour', name: 'Time Traveler', icon: '⏰', description: 'Study for at least 1 hour total', check: () => totalStudyTime >= 3600000 }
+        ];
+
+        // ==================== STUDY TIMER ====================
+
+        function checkAndUpdateStreak() {
+            const today = new Date().toDateString();
+            const lastStudy = studyStreak.lastStudyDate;
+
+            if (lastStudy !== today) {
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+
+                if (lastStudy === yesterday.toDateString()) {
+                    // Continue streak
+                    studyStreak.current++;
+                } else if (lastStudy === null) {
+                    // First time
+                    studyStreak.current = 1;
+                } else {
+                    // Streak broken
+                    studyStreak.current = 1;
+                }
+
+                studyStreak.lastStudyDate = today;
+                studyStreak.longest = Math.max(studyStreak.longest, studyStreak.current);
+                localStorage.setItem('studyStreak', JSON.stringify(studyStreak));
+            }
+        }
+
+        function checkBadges() {
+            let newBadges = [];
+
+            badges.forEach(badge => {
+                if (!earnedBadges.includes(badge.id) && badge.check()) {
+                    earnedBadges.push(badge.id);
+                    newBadges.push(badge);
+                }
+            });
+
+            if (newBadges.length > 0) {
+                localStorage.setItem('earnedBadges', JSON.stringify(earnedBadges));
+
+                // Show notification for new badges
+                newBadges.forEach(badge => {
+                    showBadgeNotification(badge);
+                });
+            }
+        }
+
+        function showBadgeNotification(badge) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border: 3px solid #667eea;
+                border-radius: 20px;
+                padding: 30px;
+                z-index: 10000;
+                box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+                text-align: center;
+                animation: badge-pop 0.5s ease;
+            `;
+
+            notification.innerHTML = `
+                <div style="font-size: 4em; margin-bottom: 15px;">${badge.icon}</div>
+                <h2 style="color: #667eea; margin-bottom: 10px;">Achievement Unlocked!</h2>
+                <h3 style="margin-bottom: 10px;">${badge.name}</h3>
+                <p style="color: #666;">${badge.description}</p>
+                <button onclick="this.parentElement.remove()" style="
+                    margin-top: 20px;
+                    padding: 10px 30px;
+                    background: #667eea;
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-size: 1em;
+                ">Awesome!</button>
+            `;
+
+            document.body.appendChild(notification);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        function startTimer() {
+            if (!timerInterval) {
+                checkAndUpdateStreak();
+                sessionStartTime = Date.now() - sessionElapsedTime;
+                timerInterval = setInterval(updateTimer, 1000);
+                timerPaused = false;
+                updateTimerButton();
+            }
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                // Save session time to total
+                totalStudyTime += sessionElapsedTime;
+                localStorage.setItem('totalStudyTime', totalStudyTime);
+                sessionElapsedTime = 0;
+                updateTotalTimeDisplay();
+            }
+        }
+
+        function toggleTimer() {
+            if (timerPaused) {
+                // Resume
+                sessionStartTime = Date.now() - sessionElapsedTime;
+                timerInterval = setInterval(updateTimer, 1000);
+                timerPaused = false;
+            } else {
+                // Pause
+                clearInterval(timerInterval);
+                timerInterval = null;
+                timerPaused = true;
+            }
+            updateTimerButton();
+        }
+
+        function updateTimer() {
+            sessionElapsedTime = Date.now() - sessionStartTime;
+            const seconds = Math.floor(sessionElapsedTime / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const displaySeconds = seconds % 60;
+
+            document.getElementById('timerDisplay').textContent =
+                `${String(minutes).padStart(2, '0')}:${String(displaySeconds).padStart(2, '0')}`;
+        }
+
+        function updateTimerButton() {
+            const btn = document.getElementById('pauseBtn');
+            if (timerPaused) {
+                btn.className = 'timer-btn resume';
+                btn.innerHTML = '<i class="fas fa-play"></i> Resume';
+            } else {
+                btn.className = 'timer-btn pause';
+                btn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            }
+        }
+
+        function updateTotalTimeDisplay() {
+            const totalMinutes = Math.floor(totalStudyTime / (1000 * 60));
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            document.getElementById('totalTime').textContent = `Total: ${hours}h ${minutes}m`;
+        }
+
+        function showTimer() {
+            document.getElementById('studyTimer').style.display = 'block';
+            startTimer();
+            updateTotalTimeDisplay();
+        }
+
+        function hideTimer() {
+            document.getElementById('studyTimer').style.display = 'none';
+            stopTimer();
+        }
+
         // ==================== NAVIGATION ====================
-        
+
         function showSection(sectionId) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(sectionId).classList.add('active');
-            
+
+            // Show/hide timer based on section
             if (sectionId === 'home') {
+                hideTimer();
                 updateHomeProgress();
-            } else if (sectionId === 'vocab') {
-                loadFlashcard();
-                updateVocabProgress();
-            } else if (sectionId === 'practice') {
-                loadNewPracticeSet();
-            } else if (sectionId === 'shortanswer') {
-                loadShortAnswers();
-            } else if (sectionId === 'test') {
-                loadTest();
-            } else if (sectionId === 'progress') {
-                loadProgressPage();
+            } else {
+                showTimer();
+                if (sectionId === 'vocab') {
+                    loadFlashcard();
+                    updateVocabProgress();
+                } else if (sectionId === 'practice') {
+                    loadNewPracticeSet();
+                } else if (sectionId === 'shortanswer') {
+                    loadShortAnswers();
+                } else if (sectionId === 'test') {
+                    loadTest();
+                } else if (sectionId === 'progress') {
+                    loadProgressPage();
+                } else if (sectionId === 'printguide') {
+                    loadPrintGuide();
+                } else if (sectionId === 'focused') {
+                    loadFocusedMode();
+                }
             }
         }
 
         // ==================== HOME PAGE ====================
         
+        function createCircularProgress(percent, label) {
+            const radius = 52;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (percent / 100) * circumference;
+
+            return `
+                <div class="stat-card">
+                    <div class="circular-progress">
+                        <svg viewBox="0 0 120 120">
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="bg-circle" cx="60" cy="60" r="${radius}"/>
+                            <circle class="progress-circle" cx="60" cy="60" r="${radius}"
+                                stroke-dasharray="${circumference}"
+                                stroke-dashoffset="${offset}"/>
+                        </svg>
+                        <div class="percentage">${percent}%</div>
+                    </div>
+                    <div class="label">${label}</div>
+                </div>
+            `;
+        }
+
+        function getProgressLevel(percent) {
+            if (percent >= 90) return 'expert';
+            if (percent >= 70) return 'proficient';
+            if (percent >= 40) return 'learning';
+            return 'beginner';
+        }
+
+        function getProgressLabel(percent) {
+            if (percent >= 90) return 'Expert';
+            if (percent >= 70) return 'Proficient';
+            if (percent >= 40) return 'Learning';
+            return 'Beginner';
+        }
+
         function updateHomeProgress() {
             const vocabMastery = vocabulary.length > 0 ? (vocabProgress.length / vocabulary.length * 100).toFixed(0) : 0;
             const practiceTotal = Object.keys(practiceProgress).length;
             const practiceCorrect = Object.values(practiceProgress).filter(v => v === true).length;
             const practicePercent = practiceTotal > 0 ? (practiceCorrect / practiceTotal * 100).toFixed(0) : 0;
-            
+
             const testsTotal = testResults.length;
-            const avgTestScore = testsTotal > 0 
+            const avgTestScore = testsTotal > 0
                 ? (testResults.reduce((sum, r) => sum + r.score, 0) / testsTotal).toFixed(0)
                 : 0;
 
             let progressHTML = '<div class="stats-grid">';
+            progressHTML += createCircularProgress(vocabMastery, 'Vocabulary Mastery');
+            progressHTML += createCircularProgress(practicePercent, 'Practice Accuracy');
+
+            if (testsTotal > 0) {
+                progressHTML += createCircularProgress(avgTestScore, 'Test Average');
+            }
+
             progressHTML += `
                 <div class="stat-card">
-                    <div class="number">${vocabMastery}%</div>
-                    <div class="label">Vocabulary You Know</div>
-                </div>
-                <div class="stat-card">
-                    <div class="number">${practicePercent}%</div>
-                    <div class="label">Practice Questions Right</div>
-                </div>
-                <div class="stat-card">
                     <div class="number">${testsTotal}</div>
-                    <div class="label">Practice Tests Done</div>
+                    <div class="label">Practice Tests Taken</div>
                 </div>
             `;
-            
-            if (testsTotal > 0) {
+
+            progressHTML += '</div>';
+
+            // Add progress badges
+            const overallProgress = (parseFloat(vocabMastery) * 0.4) + (parseFloat(practicePercent) * 0.4) + (parseFloat(avgTestScore) * 0.2);
+            const level = getProgressLevel(overallProgress);
+            const levelLabel = getProgressLabel(overallProgress);
+
+            progressHTML += `
+                <div style="text-align: center; margin: 20px 0;">
+                    <span class="progress-badge ${level}">
+                        ${levelLabel} Level (${overallProgress.toFixed(0)}% Overall)
+                    </span>
+                </div>
+            `;
+
+            // Add "Email My Teacher" button if proficient or expert
+            if (overallProgress >= 70) {
                 progressHTML += `
-                    <div class="stat-card">
-                        <div class="number">${avgTestScore}%</div>
-                        <div class="label">Average Test Score</div>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <button class="btn btn-primary" onclick="showEmailTeacherForm()" style="font-size: 1.1em; padding: 15px 30px;">
+                            <i class="fas fa-envelope"></i> Email My Teacher
+                        </button>
+                        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">
+                            You've reached ${overallProgress.toFixed(0)}% proficiency! Share your progress with your teacher.
+                        </p>
                     </div>
                 `;
             }
-            
-            progressHTML += '</div>';
+
+            // Add streak display
+            if (studyStreak.current > 0) {
+                progressHTML += `
+                    <div class="streak-display">
+                        <div class="streak-emoji">${studyStreak.current >= 7 ? '🔥🔥🔥' : studyStreak.current >= 3 ? '🔥🔥' : '🔥'}</div>
+                        <div class="streak-number">${studyStreak.current}</div>
+                        <div>Day Study Streak!</div>
+                        <div style="margin-top: 10px; font-size: 0.9em; opacity: 0.9;">Longest: ${studyStreak.longest} days</div>
+                    </div>
+                `;
+            }
+
+            // Add recently earned badges
+            const recentBadges = earnedBadges.slice(-3).reverse();
+            if (recentBadges.length > 0) {
+                progressHTML += '<h3 style="margin: 20px 0;">Recent Achievements</h3><div class="badge-display">';
+                recentBadges.forEach(badgeId => {
+                    const badge = badges.find(b => b.id === badgeId);
+                    if (badge) {
+                        progressHTML += `
+                            <div class="achievement-badge earned">
+                                <div class="badge-icon">${badge.icon}</div>
+                                <div class="badge-name">${badge.name}</div>
+                                <div class="badge-desc">${badge.description}</div>
+                            </div>
+                        `;
+                    }
+                });
+                progressHTML += '</div>';
+            }
 
             // Add readiness assessment with more encouraging language
             const totalProgress = (parseFloat(vocabMastery) * 0.4) + (parseFloat(practicePercent) * 0.4) + (parseFloat(avgTestScore) * 0.2);
@@ -1335,6 +1994,7 @@
             if (!vocabProgress.includes(term)) {
                 vocabProgress.push(term);
                 localStorage.setItem('vocabProgress', JSON.stringify(vocabProgress));
+                checkBadges();
             }
             nextCard();
         }
@@ -1351,7 +2011,55 @@
         function updateVocabProgress() {
             const percent = (vocabProgress.length / vocabulary.length * 100).toFixed(0);
             document.getElementById('vocabProgress').textContent = `${vocabProgress.length}/${vocabulary.length} terms mastered (${percent}%)`;
-            document.getElementById('vocabProgress').style.width = `${percent}%`;
+            document.getElementById('vocabProgressBar').style.width = `${percent}%`;
+
+            // Add mini progress by category
+            updateCategoryProgress();
+        }
+
+        function updateCategoryProgress() {
+            const categories = {};
+            vocabulary.forEach(v => {
+                if (!categories[v.category]) {
+                    categories[v.category] = { total: 0, known: 0 };
+                }
+                categories[v.category].total++;
+                if (vocabProgress.includes(v.term)) {
+                    categories[v.category].known++;
+                }
+            });
+
+            let categoryHTML = '<div style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 10px;">';
+            categoryHTML += '<h4 style="margin-bottom: 15px; color: #667eea;">Progress by Category:</h4>';
+
+            Object.entries(categories).forEach(([category, stats]) => {
+                const percent = (stats.known / stats.total * 100).toFixed(0);
+                categoryHTML += `
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-size: 0.9em; font-weight: 600;">${category}</span>
+                            <span style="font-size: 0.9em; color: #666;">${stats.known}/${stats.total} (${percent}%)</span>
+                        </div>
+                        <div class="mini-progress">
+                            <div class="mini-progress-fill" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            categoryHTML += '</div>';
+
+            const existingCategory = document.getElementById('categoryProgress');
+            if (existingCategory) {
+                existingCategory.innerHTML = categoryHTML;
+            } else {
+                const container = document.getElementById('vocab');
+                const progressBar = container.querySelector('.progress-bar');
+                const newDiv = document.createElement('div');
+                newDiv.id = 'categoryProgress';
+                newDiv.innerHTML = categoryHTML;
+                progressBar.parentNode.insertBefore(newDiv, progressBar.nextSibling);
+            }
         }
 
         function resetVocabProgress() {
@@ -1437,10 +2145,11 @@
         function checkPracticeAnswer(questionId) {
             const question = questions[questionId];
             const isCorrect = selectedPracticeOption === question.correct;
-            
+
             // Update progress
             practiceProgress[questionId] = isCorrect;
             localStorage.setItem('practiceProgress', JSON.stringify(practiceProgress));
+            checkBadges();
             
             // Show visual feedback on options
             document.querySelectorAll('.option').forEach((opt, index) => {
@@ -1476,7 +2185,7 @@
             const text = `Question ${currentPracticeIndex + 1} of ${currentPracticeQuestions.length}`;
             const percent = ((currentPracticeIndex) / currentPracticeQuestions.length * 100).toFixed(0);
             document.getElementById('practiceProgress').textContent = text;
-            document.getElementById('practiceProgress').style.width = `${percent}%`;
+            document.getElementById('practiceProgressBar').style.width = `${percent}%`;
         }
 
         // ==================== PRACTICE TEST ====================
@@ -1485,10 +2194,11 @@
         
         function loadTest() {
             testAnswers = {};
-            
+
             let testHTML = `
                 <div class="progress-bar">
-                    <div class="progress-fill" id="testProgress">0 of 30 answered</div>
+                    <div class="progress-fill" id="testProgressBar" style="width: 0%"></div>
+                    <div class="progress-text" id="testProgress">0 of 30 answered</div>
                 </div>
                 <div id="testQuestions">
             `;
@@ -1546,7 +2256,7 @@
             const answered = Object.keys(testAnswers).length;
             const percent = (answered / questions.length * 100).toFixed(0);
             document.getElementById('testProgress').textContent = `${answered} of ${questions.length} answered`;
-            document.getElementById('testProgress').style.width = `${percent}%`;
+            document.getElementById('testProgressBar').style.width = `${percent}%`;
         }
 
         function gradeTest() {
@@ -1601,6 +2311,7 @@
                 topicScores: topicScores
             });
             localStorage.setItem('testResults', JSON.stringify(testResults));
+            checkBadges();
 
             // Display results
             let resultsHTML = `
@@ -1671,18 +2382,24 @@
         }
 
         // ==================== PROGRESS PAGE ====================
-        
+
         function loadProgressPage() {
             // Calculate stats
             const vocabMastery = (vocabProgress.length / vocabulary.length * 100).toFixed(0);
             const practiceTotal = Object.keys(practiceProgress).length;
             const practiceCorrect = Object.values(practiceProgress).filter(v => v === true).length;
             const practicePercent = practiceTotal > 0 ? (practiceCorrect / practiceTotal * 100).toFixed(0) : 0;
-            
+
             const testsTotal = testResults.length;
-            const avgTestScore = testsTotal > 0 
+            const avgTestScore = testsTotal > 0
                 ? (testResults.reduce((sum, r) => sum + r.score, 0) / testsTotal).toFixed(0)
                 : 0;
+
+            // Format study time
+            const totalMinutes = Math.floor(totalStudyTime / (1000 * 60));
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            const studyTimeDisplay = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
 
             // Stats cards
             let statsHTML = `
@@ -1698,8 +2415,12 @@
                     <div class="number">${testsTotal}</div>
                     <div class="label">Practice Tests Done</div>
                 </div>
+                <div class="stat-card">
+                    <div class="number">${studyTimeDisplay}</div>
+                    <div class="label">Total Study Time</div>
+                </div>
             `;
-            
+
             if (testsTotal > 0) {
                 statsHTML += `
                     <div class="stat-card">
@@ -1801,6 +2522,124 @@
             }
             
             document.getElementById('strengthContainer').innerHTML = strengthHTML;
+
+            // Badges section
+            let badgesHTML = '<div style="margin: 30px 0;">';
+            badgesHTML += '<h3 style="margin-bottom: 20px;"><i class="fas fa-trophy"></i> Achievements</h3>';
+
+            if (studyStreak.current > 0) {
+                badgesHTML += `
+                    <div class="streak-display">
+                        <div class="streak-emoji">${studyStreak.current >= 7 ? '🔥🔥🔥' : studyStreak.current >= 3 ? '🔥🔥' : '🔥'}</div>
+                        <div class="streak-number">${studyStreak.current}</div>
+                        <div>Day Study Streak!</div>
+                        <div style="margin-top: 10px; font-size: 0.9em; opacity: 0.9;">Longest: ${studyStreak.longest} days</div>
+                    </div>
+                `;
+            }
+
+            badgesHTML += '<div class="badge-display">';
+
+            badges.forEach(badge => {
+                const earned = earnedBadges.includes(badge.id);
+                badgesHTML += `
+                    <div class="achievement-badge ${earned ? 'earned' : 'locked'}">
+                        <div class="badge-icon">${badge.icon}</div>
+                        <div class="badge-name">${badge.name}</div>
+                        <div class="badge-desc">${badge.description}</div>
+                    </div>
+                `;
+            });
+
+            badgesHTML += '</div></div>';
+
+            // Insert badges before the export section
+            const weaknessContainer = document.getElementById('weaknessContainer');
+            if (!document.getElementById('badgesContainer')) {
+                const badgesDiv = document.createElement('div');
+                badgesDiv.id = 'badgesContainer';
+                badgesDiv.innerHTML = badgesHTML;
+                weaknessContainer.parentNode.insertBefore(badgesDiv, weaknessContainer);
+            } else {
+                document.getElementById('badgesContainer').innerHTML = badgesHTML;
+            }
+        }
+
+        function exportProgress() {
+            const exportData = {
+                version: '1.0',
+                exportDate: new Date().toISOString(),
+                vocabProgress: vocabProgress,
+                practiceProgress: practiceProgress,
+                testResults: testResults,
+                totalStudyTime: totalStudyTime,
+                studyStreak: studyStreak,
+                earnedBadges: earnedBadges,
+                shortAnswerResponses: JSON.parse(localStorage.getItem('shortAnswerResponses')) || {}
+            };
+
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            const dateStr = new Date().toISOString().split('T')[0];
+            link.download = `revolution-review-progress-${dateStr}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            alert('Progress exported successfully! Save this file to back up your data.');
+        }
+
+        function importProgress(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importData = JSON.parse(e.target.result);
+
+                    // Validate the data
+                    if (!importData.version) {
+                        throw new Error('Invalid file format');
+                    }
+
+                    if (confirm('This will replace your current progress. Continue?')) {
+                        // Import all data
+                        vocabProgress = importData.vocabProgress || [];
+                        practiceProgress = importData.practiceProgress || {};
+                        testResults = importData.testResults || [];
+                        totalStudyTime = importData.totalStudyTime || 0;
+                        studyStreak = importData.studyStreak || { current: 0, longest: 0, lastStudyDate: null };
+                        earnedBadges = importData.earnedBadges || [];
+
+                        // Save to localStorage
+                        localStorage.setItem('vocabProgress', JSON.stringify(vocabProgress));
+                        localStorage.setItem('practiceProgress', JSON.stringify(practiceProgress));
+                        localStorage.setItem('testResults', JSON.stringify(testResults));
+                        localStorage.setItem('totalStudyTime', totalStudyTime);
+                        localStorage.setItem('studyStreak', JSON.stringify(studyStreak));
+                        localStorage.setItem('earnedBadges', JSON.stringify(earnedBadges));
+
+                        if (importData.shortAnswerResponses) {
+                            localStorage.setItem('shortAnswerResponses', JSON.stringify(importData.shortAnswerResponses));
+                        }
+
+                        alert('Progress imported successfully!');
+                        loadProgressPage();
+                    }
+                } catch (error) {
+                    alert('Error importing file: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+
+            // Reset the input so the same file can be imported again if needed
+            event.target.value = '';
         }
 
         function resetAllProgress() {
@@ -1810,6 +2649,7 @@
                     vocabProgress = [];
                     practiceProgress = {};
                     testResults = [];
+                    totalStudyTime = 0;
                     alert('All progress has been reset!');
                     showSection('home');
                 }
@@ -2029,35 +2869,370 @@
         function updateShortAnswerProgress() {
             const percent = ((currentShortAnswerIndex) / shortAnswerQuestions.length * 100).toFixed(0);
             const progressEl = document.getElementById('shortAnswerProgress');
+            const progressBarEl = document.getElementById('shortAnswerProgressBar');
             if (progressEl) {
                 progressEl.textContent = `Question ${currentShortAnswerIndex + 1} of ${shortAnswerQuestions.length}`;
-                progressEl.style.width = `${percent}%`;
+            }
+            if (progressBarEl) {
+                progressBarEl.style.width = `${percent}%`;
             }
         }
 
-        // ==================== TRANSLATION & DEFINITIONS ====================
-        
-        function translatePage(language) {
-            if (language === '') {
-                // Remove translation
-                const translated = document.querySelectorAll('.translated');
-                translated.forEach(el => {
-                    if (el._originalText) {
-                        el.textContent = el._originalText;
+        // ==================== FOCUSED STUDY MODE ====================
+
+        let focusedVocab = [];
+        let focusedQuestions = [];
+        let focusedIndex = 0;
+        let focusedType = 'vocab'; // 'vocab' or 'question'
+
+        function loadFocusedMode() {
+            // Analyze weak areas
+            const unknownVocab = vocabulary.filter(v => !vocabProgress.includes(v.term));
+            const incorrectQuestions = Object.entries(practiceProgress)
+                .filter(([qId, correct]) => !correct)
+                .map(([qId]) => questions[parseInt(qId)]);
+
+            // Get topics where performance is poor
+            const topicPerformance = {};
+            questions.forEach((q, qIndex) => {
+                if (!topicPerformance[q.topic]) {
+                    topicPerformance[q.topic] = { correct: 0, total: 0 };
+                }
+                if (practiceProgress[qIndex] !== undefined) {
+                    topicPerformance[q.topic].total++;
+                    if (practiceProgress[qIndex]) {
+                        topicPerformance[q.topic].correct++;
                     }
-                });
+                }
+            });
+
+            const weakTopics = Object.entries(topicPerformance)
+                .filter(([topic, perf]) => perf.total > 0 && (perf.correct / perf.total) < 0.7)
+                .map(([topic]) => topic);
+
+            // Generate analysis
+            let analysisHTML = '<div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">';
+            analysisHTML += '<h3 style="margin-bottom: 15px; color: #667eea;"><i class="fas fa-chart-bar"></i> Your Weak Areas:</h3>';
+
+            if (unknownVocab.length > 0) {
+                analysisHTML += `
+                    <div style="margin: 15px 0; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 8px;">
+                        <strong><i class="fas fa-book"></i> Vocabulary:</strong> ${unknownVocab.length} terms to master
+                        <div style="margin-top: 8px; font-size: 0.9em;">
+                            ${unknownVocab.slice(0, 5).map(v => v.term).join(', ')}${unknownVocab.length > 5 ? ` and ${unknownVocab.length - 5} more...` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (weakTopics.length > 0) {
+                analysisHTML += `
+                    <div style="margin: 15px 0; padding: 15px; background: #fee2e2; border-left: 4px solid #ef4444; border-radius: 8px;">
+                        <strong><i class="fas fa-exclamation-triangle"></i> Topics needing practice:</strong>
+                        <div style="margin-top: 8px;">
+                            ${weakTopics.map(topic => {
+                                const perf = topicPerformance[topic];
+                                const percent = (perf.correct / perf.total * 100).toFixed(0);
+                                return `<div style="margin: 5px 0;">${topic}: ${percent}% (${perf.correct}/${perf.total})</div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (unknownVocab.length === 0 && weakTopics.length === 0) {
+                analysisHTML += `
+                    <div style="margin: 15px 0; padding: 15px; background: #d1fae5; border-left: 4px solid #10b981; border-radius: 8px;">
+                        <strong><i class="fas fa-star"></i> Great job!</strong> You're doing well across all areas. Consider taking a practice test to verify your knowledge.
+                    </div>
+                `;
+            }
+
+            analysisHTML += '</div>';
+
+            document.getElementById('focusedAnalysis').innerHTML = analysisHTML;
+        }
+
+        function startFocusedSession() {
+            // Gather weak vocabulary
+            focusedVocab = vocabulary.filter(v => !vocabProgress.includes(v.term));
+
+            // Gather questions from weak topics
+            const topicPerformance = {};
+            questions.forEach((q, qIndex) => {
+                if (!topicPerformance[q.topic]) {
+                    topicPerformance[q.topic] = { correct: 0, total: 0, questions: [] };
+                }
+                if (practiceProgress[qIndex] !== undefined) {
+                    topicPerformance[q.topic].total++;
+                    if (practiceProgress[qIndex]) {
+                        topicPerformance[q.topic].correct++;
+                    }
+                }
+                topicPerformance[q.topic].questions.push({ question: q, index: qIndex });
+            });
+
+            const weakTopics = Object.entries(topicPerformance)
+                .filter(([topic, perf]) => perf.total > 0 && (perf.correct / perf.total) < 0.7)
+                .map(([topic]) => topic);
+
+            focusedQuestions = [];
+            weakTopics.forEach(topic => {
+                const topicQuestions = topicPerformance[topic].questions
+                    .filter(q => practiceProgress[q.index] === false || practiceProgress[q.index] === undefined)
+                    .slice(0, 3);
+                focusedQuestions.push(...topicQuestions);
+            });
+
+            // Shuffle both arrays
+            focusedVocab.sort(() => Math.random() - 0.5);
+            focusedQuestions.sort(() => Math.random() - 0.5);
+
+            // Limit to reasonable size
+            focusedVocab = focusedVocab.slice(0, 10);
+            focusedQuestions = focusedQuestions.slice(0, 10);
+
+            if (focusedVocab.length === 0 && focusedQuestions.length === 0) {
+                alert('Great work! You have no weak areas to focus on. Try taking a full practice test!');
                 return;
             }
 
-            // Use Google Translate
-            const googleTranslateUrl = `https://translate.google.com/translate?sl=en&tl=${language}&u=${encodeURIComponent(window.location.href)}`;
-            
-            alert(`This will open Google Translate in a new tab. You can also use your browser's built-in translation feature (usually right-click → Translate).`);
-            window.open(googleTranslateUrl, '_blank');
-            
-            // Reset selector
-            document.getElementById('languageSelect').value = '';
+            focusedIndex = 0;
+            focusedType = focusedVocab.length > 0 ? 'vocab' : 'question';
+
+            document.getElementById('focusedAnalysis').style.display = 'none';
+            document.querySelector('#focused .btn-primary').style.display = 'none';
+
+            showNextFocusedItem();
         }
+
+        function showNextFocusedItem() {
+            // Alternate between vocab and questions
+            let contentHTML = '<div class="progress-bar" style="margin-bottom: 30px;">';
+            const totalItems = focusedVocab.length + focusedQuestions.length;
+            const progress = ((focusedIndex) / totalItems * 100).toFixed(0);
+            contentHTML += `<div class="progress-fill" style="width: ${progress}%">${focusedIndex}/${totalItems} completed</div>`;
+            contentHTML += '</div>';
+
+            if (focusedIndex >= totalItems) {
+                // Session complete
+                contentHTML += `
+                    <div class="alert success">
+                        <i class="fas fa-trophy"></i>
+                        <div>
+                            <h2 style="margin-bottom: 10px;">Focused Session Complete!</h2>
+                            <p>You've practiced ${focusedVocab.length} vocabulary terms and ${focusedQuestions.length} questions from your weak areas.</p>
+                            <button class="btn btn-primary" onclick="showSection('home')" style="margin-top: 15px;">
+                                Back to Home
+                            </button>
+                            <button class="btn btn-secondary" onclick="startFocusedSession()" style="margin-top: 15px;">
+                                Start Another Session
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('focusedContent').innerHTML = contentHTML;
+                checkBadges();
+                return;
+            }
+
+            // Show vocab or question
+            if (focusedType === 'vocab' && focusedVocab.length > 0) {
+                const vocab = focusedVocab.shift();
+                contentHTML += `
+                    <div class="flashcard" id="focusedCard" style="cursor: pointer; position: relative;">
+                        <div class="card-front">
+                            <h3>${vocab.term}</h3>
+                            <p style="margin-top: 10px; opacity: 0.8;">(${vocab.category})</p>
+                            <p style="margin-top: 15px; font-size: 0.9em; color: rgba(255,255,255,0.8);">Click to see definition</p>
+                        </div>
+                    </div>
+                    <div id="vocabDefinition" style="display: none; background: white; padding: 25px; border-radius: 15px; margin-top: 20px; border: 2px solid #667eea;">
+                        <p style="margin: 10px 0; color: #333;"><strong>Definition:</strong> ${vocab.definition}</p>
+                        <p style="margin: 10px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; color: #333;"><strong>Example:</strong> ${vocab.example}</p>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <button class="btn btn-primary" onclick="markFocusedKnown('${vocab.term.replace(/'/g, "\\'")}')">
+                                <i class="fas fa-check"></i> I Know This Now
+                            </button>
+                            <button class="btn btn-secondary" onclick="nextFocusedItem()">
+                                Skip <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                focusedType = 'question';
+
+                // Set up after DOM updates
+                setTimeout(() => {
+                    const card = document.getElementById('focusedCard');
+                    if (card) {
+                        card.addEventListener('click', function() {
+                            document.getElementById('vocabDefinition').style.display = 'block';
+                        });
+                    }
+                }, 0);
+            } else if (focusedQuestions.length > 0) {
+                const qData = focusedQuestions.shift();
+                const question = qData.question;
+                contentHTML += `
+                    <div class="question-card">
+                        <h3>Question from ${question.topic}</h3>
+                        <p style="margin: 15px 0; font-size: 1.1em;"><strong>${question.question}</strong></p>
+                        <div class="options">
+                `;
+
+                question.options.forEach((option, index) => {
+                    contentHTML += `
+                        <div class="option" onclick="selectFocusedOption(${index}, ${question.correct})" id="focused-opt-${index}">
+                            <strong>${String.fromCharCode(65 + index)}.</strong> ${option}
+                        </div>
+                    `;
+                });
+
+                contentHTML += `
+                        </div>
+                        <div id="focused-feedback" class="feedback"></div>
+                        <div style="margin-top: 20px; text-align: center;">
+                            <button class="btn btn-primary" id="focused-next-btn" onclick="nextFocusedItem()" style="display: none;">
+                                Next <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                focusedType = 'vocab';
+            }
+
+            document.getElementById('focusedContent').innerHTML = contentHTML;
+        }
+
+        let selectedFocusedOption = -1;
+
+        function selectFocusedOption(optionIndex, correctIndex) {
+            selectedFocusedOption = optionIndex;
+            const isCorrect = optionIndex === correctIndex;
+
+            // Visual feedback
+            document.querySelectorAll('#focusedContent .option').forEach((opt, index) => {
+                opt.style.pointerEvents = 'none';
+                if (index === correctIndex) {
+                    opt.classList.add('correct');
+                } else if (index === optionIndex && !isCorrect) {
+                    opt.classList.add('incorrect');
+                }
+            });
+
+            // Show feedback
+            const feedback = document.getElementById('focused-feedback');
+            feedback.className = `feedback show ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedback.innerHTML = `
+                <h4>${isCorrect ? '<i class="fas fa-check-circle"></i> Correct!' : '<i class="fas fa-times-circle"></i> Not quite'}</h4>
+                <p>Keep practicing this topic!</p>
+            `;
+
+            document.getElementById('focused-next-btn').style.display = 'inline-block';
+        }
+
+        function markFocusedKnown(term) {
+            if (!vocabProgress.includes(term)) {
+                vocabProgress.push(term);
+                localStorage.setItem('vocabProgress', JSON.stringify(vocabProgress));
+                checkBadges();
+            }
+            nextFocusedItem();
+        }
+
+        function nextFocusedItem() {
+            focusedIndex++;
+            showNextFocusedItem();
+        }
+
+        // ==================== PRINT STUDY GUIDE ====================
+
+        let printSelection = [];
+
+        function loadPrintGuide() {
+            printSelection = vocabulary.map(v => v.term);
+            updatePrintGuide();
+        }
+
+        function updatePrintGuide() {
+            const category = document.getElementById('printCategory').value;
+            const filteredVocab = category === 'all'
+                ? vocabulary
+                : vocabulary.filter(v => v.category === category);
+
+            let guideHTML = '';
+
+            filteredVocab.forEach((term, index) => {
+                const isKnown = vocabProgress.includes(term.term);
+                const isSelected = printSelection.includes(term.term);
+
+                guideHTML += `
+                    <div class="vocab-print-item" style="
+                        border: 2px solid ${isKnown ? '#10b981' : '#e0e0e0'};
+                        background: ${isSelected ? '#f8f9fa' : 'white'};
+                        margin-bottom: 15px;
+                        padding: 15px;
+                        border-radius: 10px;
+                        opacity: ${isSelected ? '1' : '0.6'};
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                            <div style="flex: 1;">
+                                <h3 style="color: #667eea; margin: 0 0 5px 0;">${index + 1}. ${term.term}</h3>
+                                <span style="font-size: 0.85em; color: #666;">${term.category}</span>
+                                ${isKnown ? '<span style="margin-left: 10px; padding: 3px 10px; background: #d1fae5; color: #065f46; border-radius: 10px; font-size: 0.8em;"><i class="fas fa-check"></i> Known</span>' : ''}
+                            </div>
+                            <label style="cursor: pointer;">
+                                <input type="checkbox"
+                                    ${isSelected ? 'checked' : ''}
+                                    onchange="togglePrintSelection('${term.term}')"
+                                    style="width: 20px; height: 20px; cursor: pointer;">
+                            </label>
+                        </div>
+                        <p style="margin: 10px 0;"><strong>Definition:</strong> ${term.definition}</p>
+                        <p style="margin: 10px 0; padding: 10px; background: rgba(102, 126, 234, 0.1); border-radius: 5px;">
+                            <strong>Example:</strong> ${term.example}
+                        </p>
+                    </div>
+                `;
+            });
+
+            document.getElementById('printGuideContent').innerHTML = guideHTML;
+        }
+
+        function togglePrintSelection(term) {
+            const index = printSelection.indexOf(term);
+            if (index > -1) {
+                printSelection.splice(index, 1);
+            } else {
+                printSelection.push(term);
+            }
+            updatePrintGuide();
+        }
+
+        function markAllForPrint() {
+            const category = document.getElementById('printCategory').value;
+            const filteredVocab = category === 'all'
+                ? vocabulary
+                : vocabulary.filter(v => v.category === category);
+
+            printSelection = filteredVocab.map(v => v.term);
+            updatePrintGuide();
+        }
+
+        function markUnknownForPrint() {
+            const category = document.getElementById('printCategory').value;
+            const filteredVocab = category === 'all'
+                ? vocabulary
+                : vocabulary.filter(v => v.category === category);
+
+            printSelection = filteredVocab
+                .filter(v => !vocabProgress.includes(v.term))
+                .map(v => v.term);
+            updatePrintGuide();
+        }
+
+        // ==================== DEFINITIONS ====================
 
         // Vocabulary terms for quick reference
         const vocabDefinitions = {};
@@ -2123,14 +3298,214 @@
             return highlighted;
         }
 
+        // ==================== EMAIL TEACHER ====================
+
+        function showEmailTeacherForm() {
+            const vocabMastery = vocabulary.length > 0 ? (vocabProgress.length / vocabulary.length * 100).toFixed(0) : 0;
+            const practiceTotal = Object.keys(practiceProgress).length;
+            const practiceCorrect = Object.values(practiceProgress).filter(v => v === true).length;
+            const practicePercent = practiceTotal > 0 ? (practiceCorrect / practiceTotal * 100).toFixed(0) : 0;
+            const testsTotal = testResults.length;
+            const avgTestScore = testsTotal > 0
+                ? (testResults.reduce((sum, r) => sum + r.score, 0) / testsTotal).toFixed(0)
+                : 0;
+            const overallProgress = (parseFloat(vocabMastery) * 0.4) + (parseFloat(practicePercent) * 0.4) + (parseFloat(avgTestScore) * 0.2);
+
+            const totalMinutes = Math.floor(totalStudyTime / (1000 * 60));
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            const studyTimeDisplay = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+
+            const formHTML = `
+                <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;" id="emailModal">
+                    <div style="background: white; padding: 30px; border-radius: 20px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto;">
+                        <h2 style="color: #667eea; margin-bottom: 20px;"><i class="fas fa-envelope"></i> Email My Teacher</h2>
+
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <h3 style="margin-bottom: 15px; color: #333;">Your Progress Summary:</h3>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="margin: 10px 0;"><strong>Overall Proficiency:</strong> ${overallProgress.toFixed(0)}%</li>
+                                <li style="margin: 10px 0;"><strong>Vocabulary Mastery:</strong> ${vocabProgress.length}/${vocabulary.length} terms (${vocabMastery}%)</li>
+                                <li style="margin: 10px 0;"><strong>Practice Accuracy:</strong> ${practiceCorrect}/${practiceTotal} correct (${practicePercent}%)</li>
+                                <li style="margin: 10px 0;"><strong>Practice Tests:</strong> ${testsTotal} taken, ${avgTestScore}% average</li>
+                                <li style="margin: 10px 0;"><strong>Study Time:</strong> ${studyTimeDisplay}</li>
+                                <li style="margin: 10px 0;"><strong>Current Streak:</strong> ${studyStreak.current} days</li>
+                                <li style="margin: 10px 0;"><strong>Badges Earned:</strong> ${earnedBadges.length}/${badges.length}</li>
+                            </ul>
+                        </div>
+
+                        <form id="teacherEmailForm" onsubmit="sendEmailToTeacher(event)">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Your Name:</label>
+                                <input type="text" id="studentName" required style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em;">
+                            </div>
+
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Feedback (Optional):</label>
+                                <textarea id="studentFeedback" rows="5" placeholder="How helpful was this study tool? What could be improved?" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 1em; resize: vertical;"></textarea>
+                            </div>
+
+                            <div style="text-align: center; margin-top: 20px;">
+                                <button type="submit" class="btn btn-primary" style="padding: 12px 30px; font-size: 1.1em;">
+                                    <i class="fas fa-paper-plane"></i> Send Email
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="closeEmailModal()" style="padding: 12px 30px; font-size: 1.1em; margin-left: 10px;">
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+
+            const modalDiv = document.createElement('div');
+            modalDiv.innerHTML = formHTML;
+            document.body.appendChild(modalDiv);
+        }
+
+        function closeEmailModal() {
+            const modal = document.getElementById('emailModal');
+            if (modal) {
+                modal.parentElement.remove();
+            }
+        }
+
+        function sendEmailToTeacher(event) {
+            event.preventDefault();
+
+            const studentName = document.getElementById('studentName').value;
+            const feedback = document.getElementById('studentFeedback').value;
+
+            const vocabMastery = vocabulary.length > 0 ? (vocabProgress.length / vocabulary.length * 100).toFixed(0) : 0;
+            const practiceTotal = Object.keys(practiceProgress).length;
+            const practiceCorrect = Object.values(practiceProgress).filter(v => v === true).length;
+            const practicePercent = practiceTotal > 0 ? (practiceCorrect / practiceTotal * 100).toFixed(0) : 0;
+            const testsTotal = testResults.length;
+            const avgTestScore = testsTotal > 0
+                ? (testResults.reduce((sum, r) => sum + r.score, 0) / testsTotal).toFixed(0)
+                : 0;
+            const overallProgress = (parseFloat(vocabMastery) * 0.4) + (parseFloat(practicePercent) * 0.4) + (parseFloat(avgTestScore) * 0.2);
+
+            const totalMinutes = Math.floor(totalStudyTime / (1000 * 60));
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            const studyTimeDisplay = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+
+            // Build email subject and body
+            const subject = `Revolutionary War Study Progress - ${studentName}`;
+            const body = `Hello,
+
+${studentName} has reached ${overallProgress.toFixed(0)}% proficiency on the Revolutionary War Study Tool!
+
+PROGRESS SUMMARY:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Overall Proficiency: ${overallProgress.toFixed(0)}%
+Vocabulary Mastery: ${vocabProgress.length}/${vocabulary.length} terms (${vocabMastery}%)
+Practice Accuracy: ${practiceCorrect}/${practiceTotal} correct (${practicePercent}%)
+Practice Tests Taken: ${testsTotal} (Average score: ${avgTestScore}%)
+Total Study Time: ${studyTimeDisplay}
+Current Study Streak: ${studyStreak.current} days
+Longest Streak: ${studyStreak.longest} days
+Badges Earned: ${earnedBadges.length}/${badges.length}
+
+STUDENT FEEDBACK:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${feedback || 'No feedback provided.'}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Sent from Revolutionary War Study Tool
+Generated: ${new Date().toLocaleString()}`;
+
+            // Create mailto link
+            const mailtoLink = `mailto:benaderets885@edmonds.wednet.edu?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+            // Open email client
+            window.location.href = mailtoLink;
+
+            // Close modal after a brief delay
+            setTimeout(() => {
+                closeEmailModal();
+                alert('Email opened! Please send the email from your email client.');
+            }, 500);
+        }
+
+        // ==================== KEYBOARD NAVIGATION ====================
+
+        document.addEventListener('keydown', function(event) {
+            const activeSection = document.querySelector('.section.active').id;
+
+            // Don't trigger keyboard shortcuts if user is typing
+            if (event.target.tagName === 'TEXTAREA' || event.target.tagName === 'INPUT') {
+                return;
+            }
+
+            // Vocabulary section controls
+            if (activeSection === 'vocab') {
+                if (event.key === 'ArrowLeft') {
+                    event.preventDefault();
+                    prevCard();
+                } else if (event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    nextCard();
+                } else if (event.key === ' ' || event.key === 'Enter') {
+                    event.preventDefault();
+                    flipCard();
+                } else if (event.key === 'k' || event.key === 'K') {
+                    event.preventDefault();
+                    markKnown();
+                }
+            }
+
+            // Practice section controls
+            if (activeSection === 'practice') {
+                if (event.key >= '1' && event.key <= '4') {
+                    event.preventDefault();
+                    const optionIndex = parseInt(event.key) - 1;
+                    const question = currentPracticeQuestions[currentPracticeIndex];
+                    const questionId = questions.indexOf(question);
+                    selectPracticeOption(questionId, optionIndex);
+                }
+            }
+
+            // Test section controls
+            if (activeSection === 'test') {
+                if (event.key >= '1' && event.key <= '4') {
+                    // Find which question is in view
+                    const questionCards = document.querySelectorAll('#testQuestions .question-card');
+                    questionCards.forEach((card, qIndex) => {
+                        const rect = card.getBoundingClientRect();
+                        if (rect.top >= 0 && rect.top <= window.innerHeight / 2) {
+                            const optionIndex = parseInt(event.key) - 1;
+                            selectTestOption(qIndex, optionIndex);
+                        }
+                    });
+                }
+            }
+
+            // Global: Escape to go home
+            if (event.key === 'Escape' && activeSection !== 'home') {
+                showSection('home');
+            }
+        });
+
         // ==================== INITIALIZATION ====================
-        
+
         window.onload = function() {
             // Small delay to ensure DOM is ready
             setTimeout(() => {
                 updateHomeProgress();
+                showKeyboardHints();
             }, 100);
         };
+
+        function showKeyboardHints() {
+            // Add keyboard hints to the page
+            const activeSection = document.querySelector('.section.active');
+            if (!activeSection) return;
+
+            // Don't show on home page
+            if (activeSection.id === 'home') return;
+        }
     </script>
 </body>
 </html>
