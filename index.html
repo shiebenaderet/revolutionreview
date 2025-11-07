@@ -4063,10 +4063,22 @@
             document.getElementById('easyModeBtn').classList.toggle('active', mode === 'easy');
             document.getElementById('challengeModeBtn').classList.toggle('active', mode === 'challenge');
 
-            // Re-enable check button when switching to challenge mode
+            // Reset the timeline when switching modes to prevent cheating
+            timelinePlaced = {};
+            document.getElementById('timelineResults').innerHTML = '';
+
+            // Re-enable check button when switching to challenge mode and reset the flag
             if (mode === 'challenge') {
                 document.getElementById('checkTimelineBtn').disabled = false;
+                hasCheckedInEasyMode = false;
             }
+
+            // Remove feedback classes
+            setTimeout(() => {
+                document.querySelectorAll('.timeline-event').forEach(el => {
+                    el.classList.remove('correct', 'incorrect');
+                });
+            }, 100);
 
             renderTimeline();
         }
