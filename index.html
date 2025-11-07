@@ -3218,7 +3218,12 @@
 
                     <div style="text-align: center; margin: 20px 0;">
                         <button class="btn btn-primary" onclick="revealExemplar()"><i class="fas fa-eye"></i> Show Example Answer & Rubric</button>
+                        <p style="margin-top: 10px; color: #666; font-size: 0.85em;">
+                            <i class="fas fa-lightbulb"></i> Try writing your own answer first for the best learning!
+                        </p>
                     </div>
+
+                    <div id="answer-warning" style="display: none;"></div>
 
                     <div id="exemplar-section" style="display: none;">
                         <div style="background: #d1fae5; padding: 20px; border-radius: 10px; border-left: 5px solid #10b981; margin: 20px 0;">
@@ -3328,20 +3333,61 @@
             shortAnswerResponses[currentShortAnswerIndex] = response;
             localStorage.setItem('shortAnswerResponses', JSON.stringify(shortAnswerResponses));
 
+            // Check if they had a substantial attempt (more than 20 characters)
+            const hadSubstantialAttempt = response.trim().length > 20;
+
+            // Show warning if they haven't tried much
+            const warningDiv = document.getElementById('answer-warning');
+            if (!hadSubstantialAttempt) {
+                warningDiv.innerHTML = `
+                    <div class="alert info" style="margin: 20px 0;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Challenge yourself first!</strong> You'll learn more if you try writing your own answer before viewing the example. Once you view the answer, you won't be able to revise your response.
+                        </div>
+                    </div>
+                `;
+                warningDiv.style.display = 'block';
+            } else {
+                warningDiv.style.display = 'none';
+            }
+
+            // Make textarea read-only to prevent copying the answer
+            const textarea = document.getElementById('shortAnswerText');
+            textarea.readOnly = true;
+            textarea.style.background = '#f5f5f5';
+            textarea.style.cursor = 'not-allowed';
+
             // Show exemplar and rubric
             document.getElementById('exemplar-section').style.display = 'block';
+
+            // Update the Revise button based on whether they had an attempt
+            const reviseBtn = document.querySelector('button[onclick="reviseAnswer()"]');
+            if (hadSubstantialAttempt) {
+                // They wrote something, so they can keep working on it
+                reviseBtn.style.display = 'inline-block';
+            } else {
+                // They didn't write much, so hide the revise button to prevent copying
+                reviseBtn.style.display = 'none';
+            }
 
             // Scroll to exemplar
             document.getElementById('exemplar-section').scrollIntoView({ behavior: 'smooth' });
         }
 
         function reviseAnswer() {
+            // Re-enable the textarea for revisions
+            const textarea = document.getElementById('shortAnswerText');
+            textarea.readOnly = false;
+            textarea.style.background = 'white';
+            textarea.style.cursor = 'text';
+
             // Hide exemplar and let them revise
             document.getElementById('exemplar-section').style.display = 'none';
-            document.getElementById('shortAnswerText').focus();
-            
+            textarea.focus();
+
             // Scroll back to text area
-            document.getElementById('shortAnswerText').scrollIntoView({ behavior: 'smooth' });
+            textarea.scrollIntoView({ behavior: 'smooth' });
         }
 
         function nextShortAnswer() {
