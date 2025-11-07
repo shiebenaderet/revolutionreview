@@ -601,6 +601,190 @@
             font-size: 2em;
         }
 
+        .timeline-container {
+            display: flex;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .timeline-events {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            min-height: 500px;
+        }
+
+        .timeline-slots {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px dashed #667eea;
+        }
+
+        .timeline-event {
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: move;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .timeline-event:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-color: #667eea;
+        }
+
+        .timeline-event.dragging {
+            opacity: 0.5;
+        }
+
+        .timeline-event.placed {
+            cursor: default;
+            background: #f0f0ff;
+        }
+
+        .timeline-event.correct {
+            border-color: #10b981;
+            background: #d1fae5;
+        }
+
+        .timeline-event.incorrect {
+            border-color: #ef4444;
+            background: #fee2e2;
+        }
+
+        .timeline-event .event-title {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .timeline-event .event-year {
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+        }
+
+        .timeline-event .event-description {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .timeline-event .drag-handle {
+            color: #ccc;
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+
+        .timeline-slot {
+            background: white;
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .timeline-slot.drag-over {
+            background: #e0e7ff;
+            border-color: #667eea;
+            border-style: solid;
+        }
+
+        .timeline-slot .slot-number {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .timeline-slot.filled {
+            border-style: solid;
+            border-color: #667eea;
+        }
+
+        .timeline-slot .empty-message {
+            color: #999;
+            font-style: italic;
+        }
+
+        .timeline-mode-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .mode-btn {
+            padding: 10px 20px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .mode-btn:hover:not(.active) {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-200px) rotate(360deg); opacity: 0; }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            z-index: 10000;
+            animation: confetti 2s ease-out forwards;
+        }
+
+        @media (max-width: 768px) {
+            .timeline-container {
+                flex-direction: column;
+            }
+
+            .timeline-event {
+                font-size: 0.9em;
+            }
+        }
+
         .mini-progress {
             height: 8px;
             background: #e0e0e0;
@@ -821,6 +1005,10 @@
                         <i class="fas fa-dumbbell"></i> Practice Mode<br>
                         <small>Get hints when you're wrong!</small>
                     </button>
+                    <button class="nav-btn" onclick="showSection('timeline')" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                        <i class="fas fa-clock"></i> Timeline Challenge<br>
+                        <small>Put events in chronological order (9 events)</small>
+                    </button>
                     <button class="nav-btn success" onclick="showSection('shortanswer')">
                         <i class="fas fa-pencil-alt"></i> Short Answer Practice<br>
                         <small>Practice writing responses</small>
@@ -1038,12 +1226,137 @@
 
                 <div id="focusedContent"></div>
             </div>
+
+            <!-- TIMELINE CHALLENGE SECTION -->
+            <div id="timeline" class="section">
+                <button class="btn btn-secondary" onclick="showSection('home')">← Back to Home</button>
+
+                <h2 style="margin: 20px 0;"><i class="fas fa-clock"></i> Timeline Challenge</h2>
+
+                <div class="alert info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Timeline Challenge:</strong> Arrange the 9 key events leading to the Revolutionary War in chronological order! Understanding the sequence helps you see how tensions escalated over time.
+                    </div>
+                </div>
+
+                <div class="timeline-mode-toggle">
+                    <button class="mode-btn active" id="easyModeBtn" onclick="setTimelineMode('easy')">
+                        <i class="fas fa-graduation-cap"></i> Easy Mode (with years)
+                    </button>
+                    <button class="mode-btn" id="challengeModeBtn" onclick="setTimelineMode('challenge')">
+                        <i class="fas fa-medal"></i> Challenge Mode (no years)
+                    </button>
+                </div>
+
+                <div class="keyboard-hint">
+                    <span><span class="key">Click & Drag</span> Move events</span>
+                    <span><span class="key">R</span> Restart</span>
+                    <span><span class="key">Esc</span> Home</span>
+                </div>
+
+                <div id="timelineStats" style="text-align: center; margin: 20px 0; display: none;">
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; display: inline-block;">
+                        <strong>Best Score:</strong> <span id="timelineBestScore">0</span>/9 |
+                        <strong>Perfect Scores:</strong> <span id="timelinePerfectCount">0</span>/3 |
+                        <strong>Attempts:</strong> <span id="timelineAttempts">0</span>
+                    </div>
+                </div>
+
+                <div class="timeline-container" id="timelineContainer">
+                    <div class="timeline-events">
+                        <h3 style="margin-bottom: 20px; color: #667eea;">
+                            <i class="fas fa-list"></i> Events to Arrange
+                        </h3>
+                        <div id="timelineEventsList"></div>
+                    </div>
+
+                    <div class="timeline-slots">
+                        <h3 style="margin-bottom: 20px; color: #667eea;">
+                            <i class="fas fa-sort-numeric-up"></i> Timeline (Drag events here)
+                        </h3>
+                        <div id="timelineSlotsList"></div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <button class="btn btn-primary" onclick="checkTimelineAnswer()" id="checkTimelineBtn" style="font-size: 1.1em; padding: 12px 30px;">
+                        <i class="fas fa-check-circle"></i> Check My Answer
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetTimeline()" style="font-size: 1.1em; padding: 12px 30px;">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                    <button class="btn btn-secondary" onclick="showTimelineAnswer()" style="font-size: 1.1em; padding: 12px 30px;">
+                        <i class="fas fa-eye"></i> Show Answer
+                    </button>
+                </div>
+
+                <div id="timelineResults"></div>
+            </div>
         </div>
     </div>
 
     <script>
         // ==================== DATA ====================
-        
+
+        // Timeline events in chronological order
+        const timelineEvents = [
+            {
+                id: 1,
+                title: "Proclamation of 1763",
+                year: "1763",
+                description: "Britain banned colonists from settling west of Appalachian Mountains"
+            },
+            {
+                id: 2,
+                title: "Stamp Act",
+                year: "1765",
+                description: "Tax on printed materials like newspapers and legal documents"
+            },
+            {
+                id: 3,
+                title: "Quartering Act",
+                year: "1765",
+                description: "Forced colonists to house and feed British soldiers"
+            },
+            {
+                id: 4,
+                title: "Townshend Acts",
+                year: "1767",
+                description: "Taxes on imported goods like tea, glass, and paper"
+            },
+            {
+                id: 5,
+                title: "Boston Massacre",
+                year: "1770",
+                description: "British soldiers killed 5 colonists including Crispus Attucks"
+            },
+            {
+                id: 6,
+                title: "Boston Tea Party",
+                year: "1773",
+                description: "Colonists dumped British tea into Boston Harbor to protest taxes"
+            },
+            {
+                id: 7,
+                title: "Intolerable Acts",
+                year: "1774",
+                description: "Harsh punishment laws targeting Massachusetts after the Tea Party"
+            },
+            {
+                id: 8,
+                title: "First Continental Congress",
+                year: "1774",
+                description: "Colonial leaders met to coordinate response to Britain"
+            },
+            {
+                id: 9,
+                title: "Lexington & Concord",
+                year: "1775",
+                description: "First battles of the Revolutionary War - 'shot heard round the world'"
+            }
+        ];
+
         const vocabulary = [
             {
                 term: "Proclamation",
@@ -1563,6 +1876,16 @@
         let studyStreak = JSON.parse(localStorage.getItem('studyStreak')) || { current: 0, longest: 0, lastStudyDate: null };
         let earnedBadges = JSON.parse(localStorage.getItem('earnedBadges')) || [];
 
+        // Timeline Challenge
+        let timelineProgress = JSON.parse(localStorage.getItem('timelineProgress')) || {
+            bestScore: 0,
+            perfectCount: 0,
+            attempts: 0
+        };
+        let timelineMode = 'easy';
+        let timelinePlaced = {}; // Maps slot index to event id
+        let draggedEvent = null;
+
         const badges = [
             { id: 'first_study', name: 'First Steps', icon: '👶', description: 'Complete your first study session', check: () => totalStudyTime > 0 },
             { id: 'vocab_5', name: 'Word Explorer', icon: '📚', description: 'Master 5 vocabulary terms', check: () => vocabProgress.length >= 5 },
@@ -1572,7 +1895,8 @@
             { id: 'practice_10', name: 'Practice Pro', icon: '💪', description: 'Complete 10 practice questions', check: () => Object.keys(practiceProgress).length >= 10 },
             { id: 'test_pass', name: 'Test Taker', icon: '✅', description: 'Score 80% or higher on a practice test', check: () => testResults.some(t => t.score >= 80) },
             { id: 'perfect_test', name: 'Perfect Score', icon: '💯', description: 'Get 100% on a practice test', check: () => testResults.some(t => t.score >= 100) },
-            { id: 'study_hour', name: 'Time Traveler', icon: '⏰', description: 'Study for at least 1 hour total', check: () => totalStudyTime >= 3600000 }
+            { id: 'study_hour', name: 'Time Traveler', icon: '⏰', description: 'Study for at least 1 hour total', check: () => totalStudyTime >= 3600000 },
+            { id: 'timeline_master', name: 'Timeline Master', icon: '🕰️', description: 'Get perfect timeline score 3 times', check: () => timelineProgress.perfectCount >= 3 }
         ];
 
         // ==================== STUDY TIMER ====================
@@ -1769,6 +2093,8 @@
                     loadPrintGuide();
                 } else if (sectionId === 'focused') {
                     loadFocusedMode();
+                } else if (sectionId === 'timeline') {
+                    loadTimeline();
                 }
             }
         }
@@ -2575,6 +2901,7 @@
                 totalStudyTime: totalStudyTime,
                 studyStreak: studyStreak,
                 earnedBadges: earnedBadges,
+                timelineProgress: timelineProgress,
                 shortAnswerResponses: JSON.parse(localStorage.getItem('shortAnswerResponses')) || {}
             };
 
@@ -2616,6 +2943,7 @@
                         totalStudyTime = importData.totalStudyTime || 0;
                         studyStreak = importData.studyStreak || { current: 0, longest: 0, lastStudyDate: null };
                         earnedBadges = importData.earnedBadges || [];
+                        timelineProgress = importData.timelineProgress || { bestScore: 0, perfectCount: 0, attempts: 0 };
 
                         // Save to localStorage
                         localStorage.setItem('vocabProgress', JSON.stringify(vocabProgress));
@@ -2624,6 +2952,7 @@
                         localStorage.setItem('totalStudyTime', totalStudyTime);
                         localStorage.setItem('studyStreak', JSON.stringify(studyStreak));
                         localStorage.setItem('earnedBadges', JSON.stringify(earnedBadges));
+                        localStorage.setItem('timelineProgress', JSON.stringify(timelineProgress));
 
                         if (importData.shortAnswerResponses) {
                             localStorage.setItem('shortAnswerResponses', JSON.stringify(importData.shortAnswerResponses));
@@ -3146,6 +3475,248 @@
             showNextFocusedItem();
         }
 
+        // ==================== TIMELINE CHALLENGE ====================
+
+        function loadTimeline() {
+            updateTimelineStats();
+            renderTimeline();
+        }
+
+        function renderTimeline() {
+            // Randomize events for display
+            const shuffled = [...timelineEvents].sort(() => Math.random() - 0.5);
+
+            // Render events list
+            let eventsHTML = '';
+            shuffled.forEach(event => {
+                const isPlaced = Object.values(timelinePlaced).includes(event.id);
+                if (!isPlaced) {
+                    eventsHTML += `
+                        <div class="timeline-event" draggable="true" data-event-id="${event.id}"
+                            ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
+                            <div class="event-title">
+                                <span class="drag-handle">⋮⋮</span>
+                                ${event.title}
+                                ${timelineMode === 'easy' ? `<span class="event-year">${event.year}</span>` : ''}
+                            </div>
+                            <div class="event-description">${event.description}</div>
+                        </div>
+                    `;
+                }
+            });
+            document.getElementById('timelineEventsList').innerHTML = eventsHTML || '<p style="text-align: center; color: #999; padding: 20px;">All events placed!</p>';
+
+            // Render timeline slots
+            let slotsHTML = '';
+            for (let i = 1; i <= 9; i++) {
+                const eventId = timelinePlaced[i];
+                const event = timelineEvents.find(e => e.id === eventId);
+
+                slotsHTML += `
+                    <div class="timeline-slot ${event ? 'filled' : ''}" data-slot="${i}"
+                        ondragover="handleDragOver(event)" ondrop="handleDrop(event, ${i})" ondragleave="handleDragLeave(event)">
+                        <div class="slot-number">${i}</div>
+                `;
+
+                if (event) {
+                    slotsHTML += `
+                        <div class="timeline-event placed" data-event-id="${event.id}" draggable="true"
+                            ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)" onclick="removeFromSlot(${i})">
+                            <div class="event-title">
+                                ${event.title}
+                                ${timelineMode === 'easy' ? `<span class="event-year">${event.year}</span>` : ''}
+                            </div>
+                            <div class="event-description">${event.description}</div>
+                            <p style="font-size: 0.8em; color: #999; margin-top: 8px; text-align: center;">Click to remove</p>
+                        </div>
+                    `;
+                } else {
+                    slotsHTML += '<div class="empty-message">Drag an event here</div>';
+                }
+
+                slotsHTML += '</div>';
+            }
+            document.getElementById('timelineSlotsList').innerHTML = slotsHTML;
+        }
+
+        function handleDragStart(e) {
+            const eventId = parseInt(e.target.closest('.timeline-event').dataset.eventId);
+            draggedEvent = eventId;
+            e.target.closest('.timeline-event').classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            e.target.closest('.timeline-event').classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.target.closest('.timeline-slot').classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.target.closest('.timeline-slot').classList.remove('drag-over');
+        }
+
+        function handleDrop(e, slotIndex) {
+            e.preventDefault();
+            e.target.closest('.timeline-slot').classList.remove('drag-over');
+
+            if (draggedEvent) {
+                // Remove from previous slot if exists
+                Object.keys(timelinePlaced).forEach(key => {
+                    if (timelinePlaced[key] === draggedEvent) {
+                        delete timelinePlaced[key];
+                    }
+                });
+
+                // Place in new slot
+                timelinePlaced[slotIndex] = draggedEvent;
+                draggedEvent = null;
+                renderTimeline();
+            }
+        }
+
+        function removeFromSlot(slotIndex) {
+            delete timelinePlaced[slotIndex];
+            renderTimeline();
+        }
+
+        function setTimelineMode(mode) {
+            timelineMode = mode;
+            document.getElementById('easyModeBtn').classList.toggle('active', mode === 'easy');
+            document.getElementById('challengeModeBtn').classList.toggle('active', mode === 'challenge');
+            renderTimeline();
+        }
+
+        function checkTimelineAnswer() {
+            let correct = 0;
+            const results = [];
+
+            for (let i = 1; i <= 9; i++) {
+                const placedEventId = timelinePlaced[i];
+                const correctEventId = i;
+                const isCorrect = placedEventId === correctEventId;
+
+                if (isCorrect) correct++;
+
+                results.push({
+                    slot: i,
+                    placedEventId,
+                    correctEventId,
+                    isCorrect
+                });
+            }
+
+            // Update progress
+            timelineProgress.attempts++;
+            if (correct > timelineProgress.bestScore) {
+                timelineProgress.bestScore = correct;
+            }
+            if (correct === 9) {
+                timelineProgress.perfectCount++;
+                showConfetti();
+            }
+            localStorage.setItem('timelineProgress', JSON.stringify(timelineProgress));
+            updateTimelineStats();
+            checkBadges();
+
+            // Show visual feedback
+            results.forEach(result => {
+                const slot = document.querySelector(`.timeline-slot[data-slot="${result.slot}"]`);
+                const eventCard = slot?.querySelector('.timeline-event');
+                if (eventCard) {
+                    if (result.isCorrect) {
+                        eventCard.classList.add('correct');
+                    } else {
+                        eventCard.classList.add('incorrect');
+                    }
+                }
+            });
+
+            // Show results
+            let resultsHTML = `
+                <div class="alert ${correct === 9 ? 'success' : 'info'}" style="margin-top: 30px;">
+                    <i class="fas ${correct === 9 ? 'fa-trophy' : 'fa-chart-line'}"></i>
+                    <div>
+                        <h3 style="margin-bottom: 10px;">Score: ${correct} out of 9 correct!</h3>
+                        ${correct === 9 ? '<p><strong>Perfect! You mastered the timeline!</strong></p>' : ''}
+                        ${correct < 9 ? '<p>Look at the events in red - those are in the wrong position. Try again!</p>' : ''}
+                    </div>
+                </div>
+            `;
+
+            if (correct < 9) {
+                resultsHTML += '<div style="margin-top: 20px; padding: 20px; background: #fff3cd; border-radius: 10px;">';
+                resultsHTML += '<h4 style="color: #856404; margin-bottom: 15px;"><i class="fas fa-lightbulb"></i> Corrections:</h4>';
+                results.forEach(result => {
+                    if (!result.isCorrect) {
+                        const correctEvent = timelineEvents.find(e => e.id === result.correctEventId);
+                        const placedEvent = timelineEvents.find(e => e.id === result.placedEventId);
+                        resultsHTML += `<p style="color: #856404; margin: 8px 0;">Position ${result.slot} should be <strong>${correctEvent?.title}</strong>${placedEvent ? `, not ${placedEvent.title}` : ' (empty)'}</p>`;
+                    }
+                });
+                resultsHTML += '</div>';
+            }
+
+            document.getElementById('timelineResults').innerHTML = resultsHTML;
+        }
+
+        function showTimelineAnswer() {
+            // Automatically place all events in correct order
+            timelinePlaced = {};
+            for (let i = 1; i <= 9; i++) {
+                timelinePlaced[i] = i;
+            }
+            renderTimeline();
+
+            document.getElementById('timelineResults').innerHTML = `
+                <div class="alert info" style="margin-top: 30px;">
+                    <i class="fas fa-eye"></i>
+                    <div>
+                        <p><strong>Answer revealed!</strong> Study the correct order, then click "Try Again" to practice.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function resetTimeline() {
+            timelinePlaced = {};
+            renderTimeline();
+            document.getElementById('timelineResults').innerHTML = '';
+
+            // Remove feedback classes
+            document.querySelectorAll('.timeline-event').forEach(el => {
+                el.classList.remove('correct', 'incorrect');
+            });
+        }
+
+        function updateTimelineStats() {
+            document.getElementById('timelineStats').style.display = timelineProgress.attempts > 0 ? 'block' : 'none';
+            document.getElementById('timelineBestScore').textContent = timelineProgress.bestScore;
+            document.getElementById('timelinePerfectCount').textContent = timelineProgress.perfectCount;
+            document.getElementById('timelineAttempts').textContent = timelineProgress.attempts;
+        }
+
+        function showConfetti() {
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * window.innerWidth + 'px';
+                    confetti.style.top = window.innerHeight + 'px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 2000);
+                }, i * 30);
+            }
+        }
+
         // ==================== PRINT STUDY GUIDE ====================
 
         let printSelection = [];
@@ -3479,6 +4050,14 @@ Generated: ${new Date().toLocaleString()}`;
                             selectTestOption(qIndex, optionIndex);
                         }
                     });
+                }
+            }
+
+            // Timeline section controls
+            if (activeSection === 'timeline') {
+                if (event.key === 'r' || event.key === 'R') {
+                    event.preventDefault();
+                    resetTimeline();
                 }
             }
 
