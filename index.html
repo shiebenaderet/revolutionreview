@@ -3553,7 +3553,8 @@
             let contentHTML = '<div class="progress-bar" style="margin-bottom: 30px;">';
             const totalItems = focusedVocab.length + focusedQuestions.length;
             const progress = ((focusedIndex) / totalItems * 100).toFixed(0);
-            contentHTML += `<div class="progress-fill" style="width: ${progress}%">${focusedIndex}/${totalItems} completed</div>`;
+            contentHTML += `<div class="progress-fill" style="width: ${progress}%"></div>`;
+            contentHTML += `<div class="progress-text">${focusedIndex}/${totalItems} completed (${progress}%)</div>`;
             contentHTML += '</div>';
 
             if (focusedIndex >= totalItems) {
