@@ -499,9 +499,10 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #4c3fb1;
+            font-size: 2em;
+            font-weight: 900;
+            color: #2d1b69;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
         .progress-badge {
@@ -1062,6 +1063,8 @@
             padding: 40px;
             max-width: 500px;
             width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: 0 10px 50px rgba(0,0,0,0.5);
             animation: slideIn 0.3s ease;
             text-align: center;
@@ -1129,22 +1132,22 @@
             <p id="noteModalMessage">Take a moment to write this down in your notebook. This will help you remember it better!</p>
 
             <!-- Science explanation -->
-            <div style="margin: 20px 0; padding: 15px; background: #f0f9ff; border-radius: 10px; border-left: 4px solid #0284c7; text-align: left;">
+            <div style="margin: 15px 0; padding: 12px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #0284c7; text-align: left; font-size: 0.9em;">
                 <details style="cursor: pointer;">
                     <summary style="font-weight: 600; color: #0369a1; font-size: 0.95em; user-select: none;">
-                        <i class="fas fa-brain"></i> Why write by hand? (The science behind it)
+                        <i class="fas fa-brain"></i> Why write by hand? (The science)
                     </summary>
-                    <div style="margin-top: 12px; color: #555; font-size: 0.9em; line-height: 1.6;">
-                        <p style="margin-bottom: 10px;">
-                            <strong>Your brain works differently when you write by hand!</strong> Scientists used special sensors to see what happens in your brain, and here's what they found:
+                    <div style="margin-top: 10px; color: #555; font-size: 0.95em; line-height: 1.5;">
+                        <p style="margin-bottom: 8px;">
+                            <strong>Your brain works differently when you write by hand!</strong> Scientists found:
                         </p>
-                        <ul style="margin-left: 20px; margin-bottom: 10px;">
-                            <li style="margin: 8px 0;"><strong>More brain connections:</strong> Writing by hand activates multiple parts of your brain at once—including areas for movement, vision, and memory. Typing only uses a tiny bit of your brain.</li>
-                            <li style="margin: 8px 0;"><strong>Better memory:</strong> When you form each letter, your brain creates a feedback loop that helps you remember the information longer.</li>
-                            <li style="margin: 8px 0;"><strong>Deeper understanding:</strong> Writing forces you to think about what's important and put it in your own words, instead of just copying everything down.</li>
+                        <ul style="margin-left: 20px; margin-bottom: 8px;">
+                            <li style="margin: 6px 0;"><strong>More brain connections:</strong> Handwriting activates areas for movement, vision, and memory. Typing uses minimal brain activity.</li>
+                            <li style="margin: 6px 0;"><strong>Better memory:</strong> Forming each letter creates a feedback loop that helps you remember longer.</li>
+                            <li style="margin: 6px 0;"><strong>Deeper understanding:</strong> Writing forces you to process information actively.</li>
                         </ul>
-                        <p style="font-size: 0.85em; color: #666; margin-top: 10px;">
-                            <em>Source: Scientific American research on handwriting and learning</em>
+                        <p style="font-size: 0.85em; color: #666; margin-top: 8px;">
+                            <em>Source: Scientific American</em>
                         </p>
                     </div>
                 </details>
