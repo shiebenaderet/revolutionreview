@@ -1233,10 +1233,10 @@
                 <div id="strengthContainer"></div>
 
                 <div style="margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 10px;">
-                    <h3 style="margin-bottom: 15px;"><i class="fas fa-download"></i> Backup Your Progress</h3>
-                    <p style="margin-bottom: 15px; color: #666;">Export your progress to save it or transfer to another device:</p>
-                    <button class="btn btn-primary" onclick="exportProgress()"><i class="fas fa-file-export"></i> Export Progress</button>
-                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()"><i class="fas fa-file-import"></i> Import Progress</button>
+                    <h3 style="margin-bottom: 15px;"><i class="fas fa-save"></i> Save & Load</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Save your progress to a file, or load previously saved progress:</p>
+                    <button class="btn btn-primary" onclick="exportProgress()"><i class="fas fa-download"></i> Save My Progress</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()"><i class="fas fa-upload"></i> Load Saved Progress</button>
                     <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importProgress(event)">
                 </div>
 
