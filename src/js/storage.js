@@ -1,6 +1,12 @@
 // ==================== STORAGE MODULE ====================
 // Handles all localStorage operations for progress tracking
 
+// Firebase Firestore imports for cloud sync
+import { doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// Auth module imports
+import { getCurrentUser, isAuthenticated, getDatabase, onAuthChange } from './auth.js';
+
 /**
  * Save vocabulary progress to localStorage
  * @param {Array<string>} vocabProgress - Array of known vocabulary terms
@@ -202,5 +208,140 @@ export function importAllProgress(importData) {
     } catch (error) {
         console.error('Import error:', error);
         return false;
+    }
+}
+
+// ==================== CLOUD SYNC FUNCTIONALITY ====================
+// Sync localStorage data with Firebase Firestore for cross-device access
+
+let syncInterval = null;
+
+/**
+ * Sync all localStorage data to Firestore
+ * @returns {Promise<boolean>} Success status
+ */
+export async function syncToCloud() {
+    if (!isAuthenticated()) {
+        console.log('Not authenticated, skipping cloud sync');
+        return false;
+    }
+
+    try {
+        const user = getCurrentUser();
+        const db = getDatabase();
+
+        // Get all progress data from localStorage
+        const progressData = {
+            vocabProgress: loadVocabProgress(),
+            practiceProgress: loadPracticeProgress(),
+            wrongAnswerCount: loadWrongAnswerCount(),
+            testResults: loadTestResults(),
+            totalStudyTime: loadTotalStudyTime(),
+            studyStreak: loadStudyStreak(),
+            earnedBadges: loadEarnedBadges(),
+            timelineProgress: loadTimelineProgress(),
+            shortAnswerResponses: loadShortAnswerResponses(),
+            lastSynced: Date.now()
+        };
+
+        // Save progress data to Firestore
+        await setDoc(doc(db, 'users', user.uid, 'data', 'progress'), progressData, { merge: true });
+
+        console.log('✅ Synced to cloud successfully');
+        return true;
+    } catch (error) {
+        console.error('❌ Cloud sync error:', error);
+        return false;
+    }
+}
+
+/**
+ * Load data from Firestore to localStorage
+ * @returns {Promise<boolean>} True if data was loaded, false if no cloud data
+ */
+export async function syncFromCloud() {
+    if (!isAuthenticated()) {
+        console.log('Not authenticated, skipping cloud sync');
+        return false;
+    }
+
+    try {
+        const user = getCurrentUser();
+        const db = getDatabase();
+
+        // Get progress data from Firestore
+        const progressRef = doc(db, 'users', user.uid, 'data', 'progress');
+        const progressDoc = await getDoc(progressRef);
+
+        if (!progressDoc.exists()) {
+            console.log('No cloud data found');
+            return false;
+        }
+
+        const cloudData = progressDoc.data();
+
+        // Save to localStorage
+        if (cloudData.vocabProgress) saveVocabProgress(cloudData.vocabProgress);
+        if (cloudData.practiceProgress) savePracticeProgress(cloudData.practiceProgress);
+        if (cloudData.wrongAnswerCount) saveWrongAnswerCount(cloudData.wrongAnswerCount);
+        if (cloudData.testResults) saveTestResults(cloudData.testResults);
+        if (cloudData.totalStudyTime !== undefined) saveTotalStudyTime(cloudData.totalStudyTime);
+        if (cloudData.studyStreak) saveStudyStreak(cloudData.studyStreak);
+        if (cloudData.earnedBadges) saveEarnedBadges(cloudData.earnedBadges);
+        if (cloudData.timelineProgress) saveTimelineProgress(cloudData.timelineProgress);
+        if (cloudData.shortAnswerResponses) saveShortAnswerResponses(cloudData.shortAnswerResponses);
+
+        console.log('✅ Synced from cloud successfully');
+        return true;
+    } catch (error) {
+        console.error('❌ Cloud sync error:', error);
+        return false;
+    }
+}
+
+/**
+ * Enable automatic background syncing
+ * Sets up auth state listener and periodic sync interval
+ * @returns {void}
+ */
+export function enableAutoSync() {
+    // Set up auth state change listener
+    onAuthChange(async (user) => {
+        if (user) {
+            console.log('🔄 User signed in, syncing data...');
+
+            // First sync from cloud (load existing data)
+            await syncFromCloud();
+
+            // Then sync to cloud (merge with local data)
+            await syncToCloud();
+        }
+    });
+
+    // Set up periodic sync every 30 seconds
+    if (syncInterval) {
+        clearInterval(syncInterval);
+    }
+
+    syncInterval = setInterval(async () => {
+        if (isAuthenticated()) {
+            console.log('🔄 Auto-syncing to cloud...');
+            await syncToCloud();
+        }
+    }, 30000); // 30 seconds
+
+    console.log('✅ Auto-sync enabled');
+}
+
+/**
+ * Disable automatic syncing
+ * Clears the sync interval
+ * @returns {void}
+ */
+export function disableAutoSync() {
+    if (syncInterval) {
+        clearInterval(syncInterval);
+        syncInterval = null;
+        console.log('⏹️ Auto-sync disabled');
     }
 }

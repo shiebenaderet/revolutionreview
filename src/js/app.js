@@ -12,7 +12,10 @@ import {
     loadStudyStreak,
     loadEarnedBadges,
     loadTimelineProgress,
-    loadShortAnswerResponses
+    loadShortAnswerResponses,
+    enableAutoSync,
+    syncToCloud,
+    syncFromCloud
 } from './storage.js';
 import {
     initUIState,
@@ -47,7 +50,7 @@ import {
     // Analytics dashboard
     loadAnalyticsDashboard
 } from './ui.js';
-import { initAuth } from './auth.js';
+import { initAuth, signInWithGoogle, signOut } from './auth.js';
 import { initAnalytics } from './analytics.js';
 
 // TODO: Import flashcards, practice, timeline modules when they're created
@@ -120,6 +123,9 @@ export function init() {
 
     // Initialize authentication module (placeholder for Firebase)
     initAuth();
+
+    // Enable automatic cloud sync
+    enableAutoSync();
 
     // Initialize analytics module (placeholder for GA)
     initAnalytics();
@@ -322,6 +328,30 @@ window.loadPrintGuide = loadPrintGuide;
 
 // Analytics dashboard
 window.loadAnalyticsDashboard = loadAnalyticsDashboard;
+
+// Authentication and sync functions
+window.signInUser = async function() {
+    try {
+        await signInWithGoogle();
+        await syncFromCloud(); // Load cloud data after sign in
+        alert('Welcome! Your progress has been loaded from the cloud.');
+    } catch (error) {
+        console.error('Sign in error:', error);
+    }
+};
+
+window.signOutUser = async function() {
+    await signOut();
+};
+
+window.syncNow = async function() {
+    const success = await syncToCloud();
+    if (success) {
+        alert('✅ Progress synced to cloud!');
+    } else {
+        alert('Please sign in to sync to cloud.');
+    }
+};
 
 // TODO: Export flashcard and practice functions when modules are created
 // window.loadFlashcard = loadFlashcard;
