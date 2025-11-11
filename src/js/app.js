@@ -43,7 +43,9 @@ import {
     nextFocusedItem,
     // Timeline & print guide (placeholders for now)
     loadTimeline,
-    loadPrintGuide
+    loadPrintGuide,
+    // Analytics dashboard
+    loadAnalyticsDashboard
 } from './ui.js';
 import { initAuth } from './auth.js';
 import { initAnalytics } from './analytics.js';
@@ -317,6 +319,9 @@ window.loadTimeline = loadTimeline;
 
 // Print guide functions (when extracted)
 window.loadPrintGuide = loadPrintGuide;
+
+// Analytics dashboard
+window.loadAnalyticsDashboard = loadAnalyticsDashboard;
 
 // TODO: Export flashcard and practice functions when modules are created
 // window.loadFlashcard = loadFlashcard;

@@ -3,6 +3,7 @@
 
 import { vocabulary } from '../js/data.js';
 import { saveVocabProgress, loadVocabProgress } from '../js/storage.js';
+import { trackVocabMastery } from '../js/analytics.js';
 
 // State
 let currentCardIndex = 0;
@@ -67,6 +68,8 @@ export function markKnown() {
     if (!vocabProgress.includes(term)) {
         vocabProgress.push(term);
         saveVocabProgress(vocabProgress);
+        // Track vocabulary mastery in analytics
+        trackVocabMastery(term, 1, 0);
         // Badge checking would be called here
     }
     nextCard();

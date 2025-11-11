@@ -97,6 +97,10 @@
                         <i class="fas fa-chart-line"></i> Check My Progress<br>
                         <small>What do I know? What do I need to work on?</small>
                     </button>
+                    <button class="nav-btn" onclick="showSection('analytics')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="fas fa-chart-bar"></i> Analytics Dashboard<br>
+                        <small>Study patterns & question difficulty insights</small>
+                    </button>
                     <button class="nav-btn" onclick="showSection('printguide')" style="background: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 100%);">
                         <i class="fas fa-print"></i> Print Study Guide<br>
                         <small>Get a printable reference sheet</small>
@@ -249,6 +253,30 @@
                 </div>
 
                 <button class="reset-btn" onclick="resetAllProgress()">Reset All Progress</button>
+            </div>
+
+            <!-- ANALYTICS DASHBOARD SECTION -->
+            <div id="analytics" class="section">
+                <button class="btn btn-secondary" onclick="showSection('home')">← Back to Home</button>
+
+                <h2 style="margin: 20px 0;"><i class="fas fa-chart-bar"></i> Analytics Dashboard</h2>
+
+                <div class="alert info">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Data-Driven Insights:</strong> This dashboard shows your study patterns, question difficulty analysis, and performance metrics to help you study smarter!
+                    </div>
+                </div>
+
+                <div id="analyticsContent">
+                    <!-- Analytics content will be dynamically loaded here -->
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <button class="btn btn-secondary" onclick="loadAnalyticsDashboard()">
+                        <i class="fas fa-sync-alt"></i> Refresh Analytics
+                    </button>
+                </div>
             </div>
 
             <!-- PRINT STUDY GUIDE SECTION -->

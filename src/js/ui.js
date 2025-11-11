@@ -13,6 +13,7 @@ import {
     saveTimelineProgress,
     saveShortAnswerResponses
 } from './storage.js';
+import { trackTestCompletion, trackQuestionAttempt, trackPageView, trackStudySession, getAnalyticsDashboard } from './analytics.js';
 
 // ==================== STATE REFERENCES ====================
 // These will be set by app.js to access shared state
@@ -407,7 +408,24 @@ export function updateHomeProgress() {
 
 // ==================== SECTION NAVIGATION ====================
 
+// Track current section for study session analytics
+let currentSection = null;
+let sectionStartTime = null;
+
 export function showSection(sectionId) {
+    // Track study session for previous section
+    if (currentSection && currentSection !== 'home' && sectionStartTime) {
+        const duration = Date.now() - sectionStartTime;
+        trackStudySession(currentSection, duration, new Date(sectionStartTime));
+    }
+
+    // Track page view for new section
+    trackPageView(sectionId);
+
+    // Update current section tracking
+    currentSection = sectionId;
+    sectionStartTime = Date.now();
+
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.getElementById(sectionId).classList.add('active');
 
@@ -434,6 +452,8 @@ export function showSection(sectionId) {
             loadFocusedMode();
         } else if (sectionId === 'timeline') {
             loadTimeline();
+        } else if (sectionId === 'analytics') {
+            loadAnalyticsDashboard();
         }
     }
 }
@@ -596,6 +616,9 @@ export function gradeTest() {
         topicScores[question.topic].total++;
         if (isCorrect) topicScores[question.topic].correct++;
 
+        // Track question attempt in analytics
+        trackQuestionAttempt(qIndex, isCorrect, question.category, 0);
+
         // Visual feedback
         const optDiv = document.getElementById(`test-q${qIndex}-opt${question.correct}`);
         if (optDiv) optDiv.classList.add('correct');
@@ -607,6 +630,19 @@ export function gradeTest() {
     });
 
     const score = (correct / questions.length * 100).toFixed(0);
+
+    // Calculate topic breakdown for analytics
+    const topicBreakdown = {};
+    Object.entries(topicScores).forEach(([topic, scores]) => {
+        topicBreakdown[topic] = {
+            correct: scores.correct,
+            total: scores.total,
+            percentage: (scores.correct / scores.total * 100).toFixed(0)
+        };
+    });
+
+    // Track test completion in analytics
+    trackTestCompletion(parseInt(score), questions.length, correct, 0, topicBreakdown);
 
     // Save result
     state.testResults.push({
@@ -1412,6 +1448,341 @@ export function loadTimeline() {
 export function loadPrintGuide() {
     // Placeholder - needs to be extracted from index.html
     console.log('loadPrintGuide - TODO: extract from index.html');
+}
+
+// ==================== ANALYTICS DASHBOARD ====================
+
+/**
+ * Load and render the analytics dashboard
+ * Shows study patterns, question difficulty, topic performance, engagement, progress velocity, and test trends
+ */
+export function loadAnalyticsDashboard() {
+    const dashboard = getAnalyticsDashboard();
+    const container = document.getElementById('analyticsContent');
+
+    if (!container) {
+        console.error('Analytics container not found');
+        return;
+    }
+
+    let html = '';
+
+    // ==================== STUDY PATTERNS SECTION ====================
+    html += '<h3 style="margin-top: 20px;"><i class="fas fa-clock"></i> Study Patterns</h3>';
+
+    if (dashboard.studyPatterns.totalSessions === 0) {
+        html += `
+            <div class="alert info">
+                <i class="fas fa-info-circle"></i>
+                <div>No study sessions tracked yet. Start studying to see your patterns!</div>
+            </div>
+        `;
+    } else {
+        const patterns = dashboard.studyPatterns;
+        const avgMinutes = Math.floor(patterns.averageDuration / 60000);
+        const avgSeconds = Math.floor((patterns.averageDuration % 60000) / 1000);
+        const totalMinutes = Math.floor(patterns.totalTime / 60000);
+        const totalHours = Math.floor(totalMinutes / 60);
+        const remainingMinutes = totalMinutes % 60;
+
+        html += '<div class="stats-grid">';
+        html += `
+            <div class="stat-card">
+                <div class="number">${patterns.totalSessions}</div>
+                <div class="label">Total Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">${avgMinutes}m ${avgSeconds}s</div>
+                <div class="label">Average Duration</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">${totalHours}h ${remainingMinutes}m</div>
+                <div class="label">Total Study Time</div>
+            </div>
+        `;
+        html += '</div>';
+
+        // Time of day distribution
+        if (Object.keys(patterns.timeOfDayDistribution).length > 0) {
+            html += '<div style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 10px;">';
+            html += '<h4 style="margin-bottom: 15px; color: #667eea;"><i class="fas fa-sun"></i> When You Study Most</h4>';
+            html += '<div class="stats-grid">';
+
+            const timeLabels = {
+                morning: { icon: '🌅', label: 'Morning (6am-12pm)' },
+                afternoon: { icon: '☀️', label: 'Afternoon (12pm-6pm)' },
+                evening: { icon: '🌆', label: 'Evening (6pm-10pm)' },
+                night: { icon: '🌙', label: 'Night (10pm-6am)' }
+            };
+
+            Object.entries(patterns.timeOfDayDistribution).forEach(([timeOfDay, count]) => {
+                const timeInfo = timeLabels[timeOfDay] || { icon: '⏰', label: timeOfDay };
+                const percentage = ((count / patterns.totalSessions) * 100).toFixed(0);
+                html += `
+                    <div class="stat-card">
+                        <div class="number">${timeInfo.icon} ${count}</div>
+                        <div class="label">${timeInfo.label}<br>(${percentage}%)</div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div>';
+        }
+    }
+
+    // ==================== QUESTION DIFFICULTY SECTION ====================
+    html += '<h3 style="margin-top: 30px;"><i class="fas fa-exclamation-triangle"></i> Most Challenging Questions</h3>';
+
+    if (dashboard.questionDifficulty.length === 0) {
+        html += `
+            <div class="alert info">
+                <i class="fas fa-info-circle"></i>
+                <div>No question data yet. Try some practice questions to see which ones are most challenging!</div>
+            </div>
+        `;
+    } else {
+        html += '<div class="weakness-list">';
+        html += '<p style="margin-bottom: 15px;">These are the questions you\'ve gotten wrong most often. Focus on understanding these!</p>';
+
+        dashboard.questionDifficulty.forEach((q, index) => {
+            // Get the actual question text from the questions array
+            const question = questions[q.questionId];
+            if (question) {
+                html += `
+                    <div class="weakness-item">
+                        <div>
+                            <strong>Question ${q.questionId + 1}:</strong> ${question.question}<br>
+                            <small style="color: #666;">Topic: ${question.topic}</small><br>
+                            <small style="color: #ef4444;">
+                                <strong>Wrong ${q.wrongRate}% of the time</strong> (${q.incorrect} wrong out of ${q.attempts} attempts)
+                            </small>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        html += '</div>';
+    }
+
+    // ==================== TOPIC PERFORMANCE SECTION ====================
+    html += '<h3 style="margin-top: 30px;"><i class="fas fa-trophy"></i> Topic Performance</h3>';
+
+    if (dashboard.topicPerformance.length === 0) {
+        html += `
+            <div class="alert info">
+                <i class="fas fa-info-circle"></i>
+                <div>No topic data yet. Answer practice questions to see your performance by topic!</div>
+            </div>
+        `;
+    } else {
+        html += '<div class="strength-list">';
+        html += '<p style="margin-bottom: 15px;">Your success rate by topic/category:</p>';
+
+        dashboard.topicPerformance.forEach(topic => {
+            const badgeClass = topic.successRate >= 80 ? 'high' : topic.successRate >= 60 ? 'medium' : 'low';
+            html += `
+                <div class="weakness-item">
+                    ${topic.category}
+                    <span class="mastery-badge ${badgeClass}">
+                        ${topic.successRate}% (${topic.correct}/${topic.attempts})
+                    </span>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+    }
+
+    // ==================== ENGAGEMENT METRICS SECTION ====================
+    html += '<h3 style="margin-top: 30px;"><i class="fas fa-chart-pie"></i> Feature Usage</h3>';
+
+    if (dashboard.engagementMetrics.totalVisits === 0) {
+        html += `
+            <div class="alert info">
+                <i class="fas fa-info-circle"></i>
+                <div>No feature usage data yet. Explore different sections to see your engagement patterns!</div>
+            </div>
+        `;
+    } else {
+        const metrics = dashboard.engagementMetrics;
+        html += '<div style="margin: 20px 0;">';
+
+        const featureLabels = {
+            vocab: { icon: '📚', label: 'Vocabulary' },
+            practice: { icon: '✍️', label: 'Practice Questions' },
+            test: { icon: '📝', label: 'Practice Tests' },
+            timeline: { icon: '📅', label: 'Timeline Challenge' },
+            shortanswer: { icon: '💭', label: 'Short Answer' },
+            focused: { icon: '🎯', label: 'Focused Mode' }
+        };
+
+        metrics.features.forEach(feature => {
+            const featureInfo = featureLabels[feature.feature] || { icon: '📊', label: feature.feature };
+            const avgMinutes = Math.floor(feature.avgTimePerVisit / 60000);
+            const avgSeconds = Math.floor((feature.avgTimePerVisit % 60000) / 1000);
+            const totalMinutes = Math.floor(feature.totalTime / 60000);
+
+            html += `
+                <div style="margin: 15px 0; padding: 15px; background: #f8f9fa; border-left: 4px solid #667eea; border-radius: 8px;">
+                    <strong>${featureInfo.icon} ${featureInfo.label}</strong><br>
+                    <div style="margin-top: 8px; font-size: 0.9em; color: #666;">
+                        <i class="fas fa-eye"></i> ${feature.visits} visits (${feature.visitPercentage}% of total) |
+                        <i class="fas fa-clock"></i> ${totalMinutes}m total (${feature.timePercentage}% of time) |
+                        <i class="fas fa-tachometer-alt"></i> ${avgMinutes}m ${avgSeconds}s per visit
+                    </div>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+    }
+
+    // ==================== PROGRESS VELOCITY SECTION ====================
+    html += '<h3 style="margin-top: 30px;"><i class="fas fa-tachometer-alt"></i> Progress Velocity</h3>';
+
+    const velocity = dashboard.progressVelocity;
+
+    if (velocity.totalVocabMastered === 0 && velocity.totalQuestionsAttempted === 0) {
+        html += `
+            <div class="alert info">
+                <i class="fas fa-info-circle"></i>
+                <div>No progress data yet. Start learning vocabulary and practicing questions to track your velocity!</div>
+            </div>
+        `;
+    } else {
+        html += '<div class="stats-grid">';
+
+        if (velocity.totalVocabMastered > 0) {
+            html += `
+                <div class="stat-card">
+                    <div class="number">${velocity.totalVocabMastered}</div>
+                    <div class="label">Vocab Terms Mastered</div>
+                </div>
+            `;
+        }
+
+        if (velocity.totalQuestionsAttempted > 0) {
+            html += `
+                <div class="stat-card">
+                    <div class="number">${velocity.totalQuestionsAttempted}</div>
+                    <div class="label">Questions Attempted</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">${velocity.avgAttemptsPerQuestion}</div>
+                    <div class="label">Avg Attempts per Question</div>
+                </div>
+            `;
+        }
+
+        html += '</div>';
+
+        if (velocity.avgAttemptsPerQuestion < 1.5) {
+            html += `
+                <div class="alert success" style="margin-top: 15px;">
+                    <i class="fas fa-star"></i>
+                    <div>Amazing! You're getting most questions right on the first try!</div>
+                </div>
+            `;
+        } else if (velocity.avgAttemptsPerQuestion < 2.5) {
+            html += `
+                <div class="alert info" style="margin-top: 15px;">
+                    <i class="fas fa-thumbs-up"></i>
+                    <div>Good progress! You're learning from your mistakes.</div>
+                </div>
+            `;
+        }
+    }
+
+    // ==================== TEST TRENDS SECTION ====================
+    html += '<h3 style="margin-top: 30px;"><i class="fas fa-chart-line"></i> Test Performance Trends</h3>';
+
+    const trends = dashboard.testTrends;
+
+    if (trends.totalTests === 0) {
+        html += `
+            <div class="alert info">
+                <i class="fas fa-info-circle"></i>
+                <div>No test data yet. Take a practice test to start tracking your progress!</div>
+            </div>
+        `;
+    } else {
+        html += '<div class="stats-grid">';
+        html += `
+            <div class="stat-card">
+                <div class="number">${trends.totalTests}</div>
+                <div class="label">Total Tests Taken</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">${trends.averageScore}%</div>
+                <div class="label">Average Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">${trends.highestScore}%</div>
+                <div class="label">Highest Score</div>
+            </div>
+        `;
+
+        if (trends.improvement !== 0 && trends.totalTests >= 6) {
+            const improvementColor = trends.improvement > 0 ? '#10b981' : '#ef4444';
+            const improvementIcon = trends.improvement > 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+            html += `
+                <div class="stat-card" style="border-left: 4px solid ${improvementColor};">
+                    <div class="number" style="color: ${improvementColor};">
+                        <i class="fas ${improvementIcon}"></i> ${Math.abs(trends.improvement)}%
+                    </div>
+                    <div class="label">Score Change<br>(first 3 vs last 3 tests)</div>
+                </div>
+            `;
+        }
+
+        html += '</div>';
+
+        // Show improvement message
+        if (trends.improvement > 10) {
+            html += `
+                <div class="alert success" style="margin-top: 15px;">
+                    <i class="fas fa-trophy"></i>
+                    <div>
+                        <strong>Great improvement!</strong> Your scores have increased by ${trends.improvement}% from your first tests to your most recent ones. Keep it up!
+                    </div>
+                </div>
+            `;
+        } else if (trends.improvement < -10) {
+            html += `
+                <div class="alert info" style="margin-top: 15px;">
+                    <i class="fas fa-book-open"></i>
+                    <div>
+                        <strong>More practice needed.</strong> Your recent scores are lower than earlier ones. Review your weak areas and try focused practice!
+                    </div>
+                </div>
+            `;
+        }
+
+        // Recent test history
+        if (trends.recentTests.length > 0) {
+            html += '<div style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 10px;">';
+            html += '<h4 style="margin-bottom: 15px; color: #667eea;"><i class="fas fa-history"></i> Recent Test Results</h4>';
+
+            trends.recentTests.forEach((test, index) => {
+                const date = new Date(test.date).toLocaleDateString();
+                const scoreColor = test.score >= 80 ? '#10b981' : test.score >= 60 ? '#fbbf24' : '#ef4444';
+
+                html += `
+                    <div style="margin: 10px 0; padding: 12px; background: white; border-left: 4px solid ${scoreColor}; border-radius: 8px;">
+                        <strong>Test ${trends.totalTests - index}</strong> - ${date}<br>
+                        <span style="color: ${scoreColor}; font-size: 1.2em; font-weight: bold;">${test.score}%</span>
+                        <span style="color: #666; font-size: 0.9em;"> (${test.correct}/${test.totalQuestions} correct)</span>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+        }
+    }
+
+    // Set the HTML
+    container.innerHTML = html;
 }
 
 // ==================== EMAIL TEACHER FUNCTIONS ====================

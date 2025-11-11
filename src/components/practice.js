@@ -3,6 +3,7 @@
 
 import { questions } from '../js/data.js';
 import { savePracticeProgress, loadPracticeProgress, saveWrongAnswerCount, loadWrongAnswerCount } from '../js/storage.js';
+import { trackQuestionAttempt } from '../js/analytics.js';
 
 // State
 let currentPracticeQuestions = [];
@@ -101,6 +102,9 @@ export function checkPracticeAnswer(questionId) {
     // Update progress
     practiceProgress[questionId] = isCorrect;
     savePracticeProgress(practiceProgress);
+
+    // Track question attempt in analytics
+    trackQuestionAttempt(questionId, isCorrect, question.category, 0);
 
     // Track wrong answers
     if (!isCorrect) {
