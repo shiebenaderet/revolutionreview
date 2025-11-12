@@ -53,9 +53,10 @@ import {
 import { initAuth, signInWithGoogle, signOut } from './auth.js';
 import { initAnalytics } from './analytics.js';
 
-// TODO: Import flashcards, practice, timeline modules when they're created
-// import { loadFlashcard, flipCard, nextCard, prevCard, markKnown, shuffleCards, updateVocabProgress, resetVocabProgress } from './flashcards.js';
-// import { loadNewPracticeSet, selectPracticeOption, checkPracticeAnswer, nextPracticeQuestion } from './practice.js';
+// Import flashcards and practice modules
+import { loadFlashcard, flipCard, nextCard, prevCard, markKnown, shuffleCards, updateVocabProgress, resetVocabProgress } from '../components/flashcards.js';
+import { loadNewPracticeSet, selectPracticeOption, checkPracticeAnswer, nextPracticeQuestion } from '../components/practice.js';
+// TODO: Import timeline module when it's created
 // import { renderTimeline, checkTimelineAnswer, resetTimeline } from './timeline.js';
 
 // ==================== GLOBAL STATE ====================
@@ -353,19 +354,21 @@ window.syncNow = async function() {
     }
 };
 
-// TODO: Export flashcard and practice functions when modules are created
-// window.loadFlashcard = loadFlashcard;
-// window.flipCard = flipCard;
-// window.nextCard = nextCard;
-// window.prevCard = prevCard;
-// window.markKnown = markKnown;
-// window.shuffleCards = shuffleCards;
-// window.updateVocabProgress = updateVocabProgress;
-// window.resetVocabProgress = resetVocabProgress;
-// window.loadNewPracticeSet = loadNewPracticeSet;
-// window.selectPracticeOption = selectPracticeOption;
-// window.checkPracticeAnswer = checkPracticeAnswer;
-// window.nextPracticeQuestion = nextPracticeQuestion;
+// Export flashcard functions to window for onclick handlers
+window.loadFlashcard = loadFlashcard;
+window.flipCard = flipCard;
+window.nextCard = nextCard;
+window.prevCard = prevCard;
+window.markKnown = markKnown;
+window.shuffleCards = shuffleCards;
+window.updateVocabProgress = updateVocabProgress;
+window.resetVocabProgress = resetVocabProgress;
+
+// Export practice functions to window for onclick handlers
+window.loadNewPracticeSet = loadNewPracticeSet;
+window.selectPracticeOption = selectPracticeOption;
+window.checkPracticeAnswer = checkPracticeAnswer;
+window.nextPracticeQuestion = nextPracticeQuestion;
 
 // ==================== START APP ====================
 // Initialize app when DOM is ready
