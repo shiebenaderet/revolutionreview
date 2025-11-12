@@ -174,6 +174,41 @@ function loadAllProgress() {
 }
 
 /**
+ * Reload all progress from localStorage and refresh UI
+ * Called after syncing from cloud to update the UI without page refresh
+ */
+export function reloadProgress() {
+    console.log('🔄 Reloading progress from localStorage...');
+
+    // Reload all data from localStorage into app state
+    loadAllProgress();
+
+    // Update home progress display
+    updateHomeProgress();
+
+    // If user is on vocab or practice section, reload those too
+    const currentSection = document.querySelector('.section.active');
+    if (currentSection) {
+        const sectionId = currentSection.id;
+
+        if (sectionId === 'vocab') {
+            // Reload flashcard display
+            if (typeof loadFlashcard === 'function') {
+                loadFlashcard();
+                updateVocabProgress();
+            }
+        } else if (sectionId === 'practice') {
+            // Reload practice questions
+            if (typeof loadNewPracticeSet === 'function') {
+                loadNewPracticeSet();
+            }
+        }
+    }
+
+    console.log('✅ Progress reloaded and UI refreshed!');
+}
+
+/**
  * Set up all event listeners for navigation and controls
  */
 function setupEventListeners() {
@@ -334,8 +369,15 @@ window.loadAnalyticsDashboard = loadAnalyticsDashboard;
 window.signInUser = async function() {
     try {
         await signInWithGoogle();
-        await syncFromCloud(); // Load cloud data after sign in
-        alert('Welcome! Your progress has been loaded from the cloud.');
+        const hasCloudData = await syncFromCloud(); // Load cloud data after sign in
+
+        if (hasCloudData) {
+            // Reload app state and refresh UI to show cloud data
+            reloadProgress();
+            alert('Welcome! Your progress has been loaded from the cloud.');
+        } else {
+            alert('Welcome! No previous progress found in the cloud.');
+        }
     } catch (error) {
         console.error('Sign in error:', error);
     }
