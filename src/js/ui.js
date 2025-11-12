@@ -1441,13 +1441,190 @@ export function loadTimeline() {
 }
 
 // ==================== PRINT GUIDE FUNCTIONS ====================
-// TODO: Extract these from index.html to a separate printguide.js module
-// Functions needed: loadPrintGuide, updatePrintGuide, togglePrintSelection,
-// markAllForPrint, markUnknownForPrint
 
+/**
+ * Load and render the print study guide
+ * Shows vocabulary terms with known/unknown status indicators
+ */
 export function loadPrintGuide() {
-    // Placeholder - needs to be extracted from index.html
-    console.log('loadPrintGuide - TODO: extract from index.html');
+    updatePrintGuide();
+}
+
+/**
+ * Update print guide content based on selected category
+ */
+export function updatePrintGuide() {
+    const category = document.getElementById('printCategory')?.value || 'all';
+    const container = document.getElementById('printGuideContent');
+
+    if (!container) {
+        console.error('Print guide container not found');
+        return;
+    }
+
+    const vocabProgress = state?.vocabProgress || [];
+
+    // Filter vocabulary by category
+    let filteredVocab = vocabulary;
+    if (category !== 'all') {
+        filteredVocab = vocabulary.filter(v => v.category === category);
+    }
+
+    let html = '<div class="print-guide-content">';
+
+    // Group by category
+    const categories = {};
+    filteredVocab.forEach(term => {
+        if (!categories[term.category]) {
+            categories[term.category] = [];
+        }
+        categories[term.category].push(term);
+    });
+
+    // Render each category
+    Object.entries(categories).forEach(([cat, terms]) => {
+        html += `
+            <div class="print-category" style="margin-bottom: 30px; page-break-inside: avoid;">
+                <h3 style="color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 10px; margin-bottom: 20px;">
+                    ${cat}
+                </h3>
+        `;
+
+        terms.forEach(term => {
+            const isKnown = vocabProgress.includes(term.term);
+            const statusBadge = isKnown
+                ? '<span class="mastery-badge high" style="margin-left: 10px;"><i class="fas fa-check"></i> Known</span>'
+                : '<span class="mastery-badge low" style="margin-left: 10px;"><i class="fas fa-question"></i> Unknown</span>';
+
+            html += `
+                <div class="vocab-item" style="margin-bottom: 20px; padding: 15px; background: ${isKnown ? '#f0fdf4' : '#fef2f2'}; border-left: 4px solid ${isKnown ? '#10b981' : '#ef4444'}; border-radius: 8px; page-break-inside: avoid;">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0; color: #333; flex: 1;">${term.term}</h4>
+                        ${statusBadge}
+                    </div>
+                    <p style="margin: 10px 0; color: #555; line-height: 1.6;"><strong>Definition:</strong> ${term.definition}</p>
+                    <p style="margin: 10px 0; color: #666; font-style: italic; line-height: 1.6;"><strong>Example:</strong> ${term.example}</p>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+    });
+
+    // Summary stats
+    const totalTerms = filteredVocab.length;
+    const knownTerms = filteredVocab.filter(v => vocabProgress.includes(v.term)).length;
+    const unknownTerms = totalTerms - knownTerms;
+
+    html += `
+        <div class="print-summary" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px; page-break-inside: avoid;">
+            <h3 style="color: #667eea; margin-bottom: 15px;">Progress Summary</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2em; font-weight: bold; color: #667eea;">${totalTerms}</div>
+                    <div style="color: #666;">Total Terms</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2em; font-weight: bold; color: #10b981;">${knownTerms}</div>
+                    <div style="color: #666;">Known</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 2em; font-weight: bold; color: #ef4444;">${unknownTerms}</div>
+                    <div style="color: #666;">Need Practice</div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+/**
+ * Mark all terms for printing (select all)
+ */
+export function markAllForPrint() {
+    const category = document.getElementById('printCategory')?.value || 'all';
+
+    // Filter vocabulary by category
+    let filteredVocab = vocabulary;
+    if (category !== 'all') {
+        filteredVocab = vocabulary.filter(v => v.category === category);
+    }
+
+    alert(`✅ Displaying all ${filteredVocab.length} terms from ${category === 'all' ? 'all categories' : category}.\n\nClick "Print Study Guide" to print!`);
+    updatePrintGuide();
+}
+
+/**
+ * Mark only unknown terms for printing
+ */
+export function markUnknownForPrint() {
+    const category = document.getElementById('printCategory')?.value || 'all';
+    const vocabProgress = state?.vocabProgress || [];
+
+    // Filter vocabulary by category
+    let filteredVocab = vocabulary;
+    if (category !== 'all') {
+        filteredVocab = vocabulary.filter(v => v.category === category);
+    }
+
+    const unknownTerms = filteredVocab.filter(v => !vocabProgress.includes(v.term));
+
+    if (unknownTerms.length === 0) {
+        alert('🎉 Great job! You know all the terms in this category!\n\nNo unknown terms to display.');
+        return;
+    }
+
+    // Create a custom filtered view showing only unknown terms
+    const container = document.getElementById('printGuideContent');
+    if (!container) return;
+
+    let html = `
+        <div class="alert info" style="margin-bottom: 20px;">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                <strong>Showing Unknown Terms Only:</strong> These are the ${unknownTerms.length} terms you haven't marked as known yet. Focus on these for maximum study efficiency!
+            </div>
+        </div>
+    `;
+
+    // Group unknown terms by category
+    const categories = {};
+    unknownTerms.forEach(term => {
+        if (!categories[term.category]) {
+            categories[term.category] = [];
+        }
+        categories[term.category].push(term);
+    });
+
+    // Render each category
+    Object.entries(categories).forEach(([cat, terms]) => {
+        html += `
+            <div class="print-category" style="margin-bottom: 30px; page-break-inside: avoid;">
+                <h3 style="color: #ef4444; border-bottom: 2px solid #ef4444; padding-bottom: 10px; margin-bottom: 20px;">
+                    <i class="fas fa-exclamation-triangle"></i> ${cat} - Need Practice
+                </h3>
+        `;
+
+        terms.forEach(term => {
+            html += `
+                <div class="vocab-item" style="margin-bottom: 20px; padding: 15px; background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 8px; page-break-inside: avoid;">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0; color: #333; flex: 1;">${term.term}</h4>
+                        <span class="mastery-badge low"><i class="fas fa-question"></i> Unknown</span>
+                    </div>
+                    <p style="margin: 10px 0; color: #555; line-height: 1.6;"><strong>Definition:</strong> ${term.definition}</p>
+                    <p style="margin: 10px 0; color: #666; font-style: italic; line-height: 1.6;"><strong>Example:</strong> ${term.example}</p>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+    });
+
+    container.innerHTML = html;
+    alert(`📝 Now showing ${unknownTerms.length} unknown terms.\n\nThese are the terms you should focus on!\n\nClick "Print Study Guide" to print.`);
 }
 
 // ==================== ANALYTICS DASHBOARD ====================

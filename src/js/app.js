@@ -44,9 +44,13 @@ import {
     selectFocusedOption,
     markFocusedKnown,
     nextFocusedItem,
-    // Timeline & print guide (placeholders for now)
+    // Timeline (placeholder for now)
     loadTimeline,
+    // Print guide functions
     loadPrintGuide,
+    updatePrintGuide,
+    markAllForPrint,
+    markUnknownForPrint,
     // Analytics dashboard
     loadAnalyticsDashboard
 } from './ui.js';
@@ -372,8 +376,11 @@ window.nextFocusedItem = nextFocusedItem;
 // Timeline functions (when extracted)
 window.loadTimeline = loadTimeline;
 
-// Print guide functions (when extracted)
+// Print guide functions
 window.loadPrintGuide = loadPrintGuide;
+window.updatePrintGuide = updatePrintGuide;
+window.markAllForPrint = markAllForPrint;
+window.markUnknownForPrint = markUnknownForPrint;
 
 // Analytics dashboard
 window.loadAnalyticsDashboard = loadAnalyticsDashboard;
