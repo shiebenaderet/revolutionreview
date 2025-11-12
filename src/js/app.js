@@ -56,8 +56,21 @@ import { initAnalytics } from './analytics.js';
 // Import flashcards and practice modules
 import { loadFlashcard, flipCard, nextCard, prevCard, markKnown, shuffleCards, updateVocabProgress, resetVocabProgress } from '../components/flashcards.js';
 import { loadNewPracticeSet, selectPracticeOption, checkPracticeAnswer, nextPracticeQuestion } from '../components/practice.js';
-// TODO: Import timeline module when it's created
-// import { renderTimeline, checkTimelineAnswer, resetTimeline } from './timeline.js';
+// Import timeline module
+import {
+    loadTimeline,
+    renderTimeline,
+    handleDragStart,
+    handleDragEnd,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    removeFromSlot,
+    setTimelineMode,
+    checkTimelineAnswer,
+    showTimelineAnswer,
+    resetTimeline
+} from '../components/timeline.js';
 
 // ==================== GLOBAL STATE ====================
 export const appState = {
@@ -411,6 +424,20 @@ window.loadNewPracticeSet = loadNewPracticeSet;
 window.selectPracticeOption = selectPracticeOption;
 window.checkPracticeAnswer = checkPracticeAnswer;
 window.nextPracticeQuestion = nextPracticeQuestion;
+
+// Export timeline functions to window for onclick handlers
+window.loadTimeline = loadTimeline;
+window.renderTimeline = renderTimeline;
+window.handleDragStart = handleDragStart;
+window.handleDragEnd = handleDragEnd;
+window.handleDragOver = handleDragOver;
+window.handleDragLeave = handleDragLeave;
+window.handleDrop = handleDrop;
+window.removeFromSlot = removeFromSlot;
+window.setTimelineMode = setTimelineMode;
+window.checkTimelineAnswer = checkTimelineAnswer;
+window.showTimelineAnswer = showTimelineAnswer;
+window.resetTimeline = resetTimeline;
 
 // ==================== START APP ====================
 // Initialize app when DOM is ready
